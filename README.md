@@ -1,81 +1,156 @@
 # BridgeTranslate
 
-**Say it your way. Add anything that helps explain it. Check the meaning. Take the version another person or system can understand.**
+**Use GitHub to keep the bridge. Use Cloudflare to run the bridge as a webpage.**
 
 BridgeTranslate is a user-made accessibility solution to a system-wide translation problem.
 
-It is designed for the point where natural, nonlinear, neurodivergent, disabled, dyslexic, hyperlexic, alexithymic, non-speaking, AAC-supported or multilingual communication meets a linear form, service, relationship or institution.
+It accepts natural, nonlinear, neurodivergent, disabled, dyslexic, hyperlexic, alexithymic, non-speaking, AAC-supported or multilingual communication, maps the intended meaning, asks the user to confirm it, then translates that confirmed meaning into a useful format.
 
 The user remains the owner of the meaning.
+
+## Which platform does what?
+
+| Platform | Job |
+|---|---|
+| **GitHub** | Stores the open specification, webpage files and version history. Organisations can copy or adapt the bridge from here. |
+| **Cloudflare Workers** | Hosts Ree's working peer webpage, checks the invitation code and calls the selected AI provider from the server side. |
+| **AI provider** | Analyses the active text and documents and returns the meaning map or requested draft. The reference adapter currently uses OpenAI, but the specification is provider-neutral. |
+
+You do **not** need Python or Streamlit to deploy the current reference webpage.
+
+## Current reference build
+
+The current peer crossing uses ordinary HTML, CSS and JavaScript with a Cloudflare Worker:
+
+```text
+BridgeTranslate/
+├── public/
+│   ├── index.html          # the accessible peer webpage
+│   └── bridge-live.js      # browser interaction and live bridge calls
+├── src/
+│   ├── index.js            # Cloudflare Worker and AI adapter
+│   ├── live-index.js       # live page handling
+│   └── bridge-context.js   # universal translation rules
+├── specification/
+│   ├── USER_JOURNEY.md
+│   ├── SYSTEM_CONTEXT.md
+│   ├── TRANSLATION_AIDS.md
+│   ├── communication-options.json
+│   ├── translation-aids.json
+│   ├── INPUT_SCHEMA.json
+│   └── OUTPUT_SCHEMA.json
+├── reference-web/          # static no-AI interface demonstration
+├── wrangler.jsonc          # Cloudflare configuration
+├── package.json
+└── README.md
+```
+
+## What the working crossing does
+
+```text
+Invitation code
+      ↓
+Optional communication prompts
+      ↓
+Context / About Me documents
++ documents about what happened
++ natural account
+      ↓
+Meaning map
+      ↓
+User confirms or corrects meaning
+      ↓
+Destination-specific draft
+      ↓
+User edits and confirms
+      ↓
+Copy, text, Word-compatible or PDF/print output
+      ↓
+Erase active session
+```
+
+The bridge keeps separate lanes for:
+
+- communication context;
+- the user's account;
+- documentary evidence;
+- conflicting evidence;
+- model inference;
+- uncertainty or missing information.
+
+## Cloudflare deployment
+
+In Cloudflare, create a Worker by importing this GitHub repository.
+
+Use:
+
+```text
+Repository: WobblyWanderer/BridgeTranslate
+Branch: main
+Configuration: wrangler.jsonc
+```
+
+Add these as **Cloudflare secrets**, never as GitHub files:
+
+```text
+BRIDGE_ACCESS_CODE
+OPENAI_API_KEY
+```
+
+Optional:
+
+```text
+OPENAI_MODEL
+```
+
+The GitHub-connected Cloudflare build can then deploy automatically whenever the selected branch changes.
 
 ## Two linked deliverables
 
 ### 1. Hosted peer bridge
 
-A low-friction crossing that can be shared with peers such as ADHD Babes, WI members and other human beings who need help translating an account and relevant material into a useful output.
+A low-friction crossing for ADHD Babes, WI members and other peers who need help carrying their meaning into a form another person or system can understand.
 
-The peer crossing is intended to:
+It is designed to:
 
-- use invitation access without requiring a permanent account;
+- use invitation access without a permanent account;
 - accept written communication without requiring speech;
-- accept an optional Context / About Me document;
+- accept optional Context / About Me material;
 - accept relevant evidence and screenshots;
-- map the user's meaning before drafting;
-- ask the user to confirm or correct the map;
-- create an editable destination-specific output;
-- allow the active session to be erased.
+- map meaning before drafting;
+- require user confirmation;
+- create editable destination-specific outputs;
+- erase the active application session.
 
 ### 2. Reusable organisational bridge
 
 A free, platform-neutral specification that public bodies, charities, healthcare services, employers and other organisations can adopt inside infrastructure they control.
 
-Organisations remain responsible for their own hosting, authentication, AI provider, security, retention, data-protection duties and integration with existing systems.
+BridgeTranslate does not require Cloudflare, OpenAI or one programming language. An adopting organisation can use its approved hosting, authentication, model, retention and security systems while preserving the same crossing and accessibility rules.
 
-BridgeTranslate specifies the crossing. It does not require one programming language, cloud provider or model.
+## Universal translation aids
 
-## Repository map
+The bridge includes diagnosis-optional support for:
 
-```text
-BridgeTranslate/
-├── specification/
-│   ├── USER_JOURNEY.md
-│   ├── SYSTEM_CONTEXT.md
-│   ├── communication-options.json
-│   ├── INPUT_SCHEMA.json
-│   └── OUTPUT_SCHEMA.json
-├── reference-web/
-│   ├── index.html
-│   ├── styles.css
-│   └── app.js
-├── app.py
-├── requirements.txt
-└── README.md
-```
+- functional and relational naming;
+- network capture before sequencing;
+- procedural competence without formal labels;
+- translation of hidden institutional questions;
+- concrete and visual anchoring;
+- delayed and distributed processing;
+- alexithymia and interoception;
+- stress, sensory and memory load;
+- dialect, mirroring and register fluidity;
+- written, non-speaking, AAC and supported communication;
+- multilingual and cross-cultural communication;
+- evidence provenance and visible uncertainty;
+- energy-preserving translation.
 
-## Current status
+See `specification/TRANSLATION_AIDS.md` and `src/bridge-context.js`.
 
-### Static reference interface
+## Original Python experiment
 
-`reference-web/` is a clickable browser prototype built with ordinary HTML, CSS and JavaScript.
-
-It demonstrates:
-
-- the welcome and consent journey;
-- icon-led communication options;
-- bracketed cognitive and communication labels;
-- written-only, non-speaking and AAC-supported communication choices;
-- separate Context and Evidence upload areas;
-- natural input;
-- the mandatory meaning-confirmation loop;
-- destination selection;
-- editable draft and output controls;
-- erase-session behaviour.
-
-The static prototype does not send, read or analyse files. It is for testing the crossing before an AI adapter is connected.
-
-### Original Python experiment
-
-`app.py` is the earlier Streamlit translation experiment. It remains available as a historical reference but is not the required architecture for BridgeTranslate.
+`app.py` and `requirements.txt` are retained only as an earlier Streamlit experiment and historical reference. They are **not** the current deployment route and are not required by Cloudflare or by organisations adopting the open bridge.
 
 ## Core rules
 
@@ -83,41 +158,11 @@ The static prototype does not send, read or analyse files. It is for testing the
 2. Diagnosis and speech are never required.
 3. Natural input comes before linear structure.
 4. Context and evidence remain distinguishable.
-5. The bridge reflects meaning back before drafting.
+5. Meaning is reflected back before drafting.
 6. Uncertainty is shown, not guessed away.
 7. Evidence-based statements remain connected to their sources.
 8. The final result remains editable.
-9. The open specification remains provider-neutral.
+9. The specification remains provider-neutral.
 10. Adopting organisations operate their own safe crossing.
-
-## Test the static interface locally
-
-No Python or installation is needed.
-
-1. Download or clone this repository.
-2. Open `reference-web/index.html` in a modern browser.
-3. Enter any non-empty invitation code in the prototype.
-4. Walk through the crossing and note anything confusing, missing or tiring.
-
-A hosted preview will be connected only after the interface is ready for user testing.
-
-## Not yet connected
-
-The development branch does not yet include:
-
-- a real access-code service;
-- AI document analysis;
-- a provider adapter;
-- real Word or PDF generation;
-- production data handling;
-- a hosted peer deployment.
-
-These components should be attached after the crossing itself has been tested.
-
-## Project purpose
-
-BridgeTranslate is not intended to make one person responsible for translating for everyone.
-
-It demonstrates that organisations can accept a person's natural account and evidence, confirm the intended meaning, and translate it into the structure their existing process expects.
 
 > Accessibility should not depend on the user already understanding the system's hidden language.
