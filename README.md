@@ -1,85 +1,123 @@
-# Neurospicy Translation MVP
+# BridgeTranslate
 
-A low-friction Streamlit prototype that accepts natural, nonlinear input and translates it
-into a selected institutional or interpersonal format.
+**Say it your way. Add anything that helps explain it. Check the meaning. Take the version another person or system can understand.**
 
-## What this prototype includes
+BridgeTranslate is a user-made accessibility solution to a system-wide translation problem.
 
-- User-selected communication traits and preferences
-- A large natural-language input area
-- Purpose and output-style selectors
-- Optional context
-- OpenAI Responses API integration
-- Editable results
-- Word, PDF and plain-text downloads
-- No database or user accounts
-- No advertising
+It is designed for the point where natural, nonlinear, neurodivergent, disabled, dyslexic, hyperlexic, alexithymic, non-speaking, AAC-supported or multilingual communication meets a linear form, service, relationship or institution.
 
-## Run locally
+The user remains the owner of the meaning.
 
-1. Install Python 3.11 or later.
-2. Open a terminal in this folder.
-3. Create a virtual environment:
+## Two linked deliverables
 
-   Windows:
-   `python -m venv .venv`
-   `.venv\Scripts\activate`
+### 1. Hosted peer bridge
 
-   macOS or Linux:
-   `python3 -m venv .venv`
-   `source .venv/bin/activate`
+A low-friction crossing that can be shared with peers such as ADHD Babes, WI members and other human beings who need help translating an account and relevant material into a useful output.
 
-4. Install packages:
+The peer crossing is intended to:
 
-   `pip install -r requirements.txt`
+- use invitation access without requiring a permanent account;
+- accept written communication without requiring speech;
+- accept an optional Context / About Me document;
+- accept relevant evidence and screenshots;
+- map the user's meaning before drafting;
+- ask the user to confirm or correct the map;
+- create an editable destination-specific output;
+- allow the active session to be erased.
 
-5. Copy `.env.example` to `.env`, then set your API key.
+### 2. Reusable organisational bridge
 
-   Streamlit does not automatically load `.env`, so either set the environment variable
-   in your terminal or use `.streamlit/secrets.toml`.
+A free, platform-neutral specification that public bodies, charities, healthcare services, employers and other organisations can adopt inside infrastructure they control.
 
-   Example `.streamlit/secrets.toml`:
+Organisations remain responsible for their own hosting, authentication, AI provider, security, retention, data-protection duties and integration with existing systems.
 
-   `OPENAI_API_KEY = "your-key-here"`
-   `OPENAI_MODEL = "gpt-5-mini"`
+BridgeTranslate specifies the crossing. It does not require one programming language, cloud provider or model.
 
-6. Start the app:
+## Repository map
 
-   `streamlit run app.py`
+```text
+BridgeTranslate/
+├── specification/
+│   ├── USER_JOURNEY.md
+│   ├── SYSTEM_CONTEXT.md
+│   ├── communication-options.json
+│   ├── INPUT_SCHEMA.json
+│   └── OUTPUT_SCHEMA.json
+├── reference-web/
+│   ├── index.html
+│   ├── styles.css
+│   └── app.js
+├── app.py
+├── requirements.txt
+└── README.md
+```
 
-## Streamlit Cloud
+## Current status
 
-Add these values under App settings → Secrets:
+### Static reference interface
 
-`OPENAI_API_KEY = "your-key-here"`
-`OPENAI_MODEL = "gpt-5-mini"`
+`reference-web/` is a clickable browser prototype built with ordinary HTML, CSS and JavaScript.
 
-Never put a real API key in GitHub.
+It demonstrates:
 
-## Important production work
+- the welcome and consent journey;
+- icon-led communication options;
+- bracketed cognitive and communication labels;
+- written-only, non-speaking and AAC-supported communication choices;
+- separate Context and Evidence upload areas;
+- natural input;
+- the mandatory meaning-confirmation loop;
+- destination selection;
+- editable draft and output controls;
+- erase-session behaviour.
 
-This is an MVP, not yet a safe public service. Before launch, add:
+The static prototype does not send, read or analyse files. It is for testing the crossing before an AI adapter is connected.
 
-- Authentication and account deletion
-- Payment handling through a provider such as Stripe
-- Rate limits and subscription entitlements
-- Explicit consent and privacy notices
-- A retention policy and configurable deletion
-- Safeguarding and crisis-routing language
-- Stronger document handling and malware checks
-- Audit logging without storing sensitive content
-- Accessibility testing with keyboard, screen readers, zoom and voice input
-- Human review warnings for legal, medical and benefits outputs
-- Prompt-injection protection for uploaded documents
-- Testing with diverse neurodivergent users
-- UK GDPR and data-processing review
+### Original Python experiment
 
-## Suggested next build order
+`app.py` is the earlier Streamlit translation experiment. It remains available as a historical reference but is not the required architecture for BridgeTranslate.
 
-1. Test the translation flow with ten example prompts.
-2. Adjust labels, instructions and output modes.
-3. Add speech-to-text.
-4. Add accounts and saved preferences.
-5. Add paid usage and one-off document credits.
-6. Add secure document uploads.
-7. Add multilingual and culturally adapted versions only after the English workflow is stable.
+## Core rules
+
+1. The user owns the meaning.
+2. Diagnosis and speech are never required.
+3. Natural input comes before linear structure.
+4. Context and evidence remain distinguishable.
+5. The bridge reflects meaning back before drafting.
+6. Uncertainty is shown, not guessed away.
+7. Evidence-based statements remain connected to their sources.
+8. The final result remains editable.
+9. The open specification remains provider-neutral.
+10. Adopting organisations operate their own safe crossing.
+
+## Test the static interface locally
+
+No Python or installation is needed.
+
+1. Download or clone this repository.
+2. Open `reference-web/index.html` in a modern browser.
+3. Enter any non-empty invitation code in the prototype.
+4. Walk through the crossing and note anything confusing, missing or tiring.
+
+A hosted preview will be connected only after the interface is ready for user testing.
+
+## Not yet connected
+
+The development branch does not yet include:
+
+- a real access-code service;
+- AI document analysis;
+- a provider adapter;
+- real Word or PDF generation;
+- production data handling;
+- a hosted peer deployment.
+
+These components should be attached after the crossing itself has been tested.
+
+## Project purpose
+
+BridgeTranslate is not intended to make one person responsible for translating for everyone.
+
+It demonstrates that organisations can accept a person's natural account and evidence, confirm the intended meaning, and translate it into the structure their existing process expects.
+
+> Accessibility should not depend on the user already understanding the system's hidden language.
