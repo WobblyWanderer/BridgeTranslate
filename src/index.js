@@ -42,22 +42,6 @@ function readJsonArray(form, name) {
   }
 }
 
-function constantTimeEqual(a, b) {
-  const left = new TextEncoder().encode(a || '');
-  const right = new TextEncoder().encode(b || '');
-  const length = Math.max(left.length, right.length);
-  let mismatch = left.length ^ right.length;
-  for (let index = 0; index < length; index += 1) {
-    mismatch |= (left[index] || 0) ^ (right[index] || 0);
-  }
-  return mismatch === 0;
-}
-
-function accessAllowed(code, env) {
-  if (!env.BRIDGE_ACCESS_CODE) return false;
-  return constantTimeEqual(code, env.BRIDGE_ACCESS_CODE);
-}
-
 function arrayBufferToBase64(buffer) {
   const bytes = new Uint8Array(buffer);
   let binary = '';
@@ -198,22 +182,14 @@ async function callOpenAI(env, content) {
   return { ok: true, text };
 }
 
-async function handleAccess(request, env) {
+async function handleAccess(request) {
   if (request.method !== 'POST') return json({ error: 'Method not allowed.' }, 405);
-  const body = await request.json().catch(() => ({}));
-  if (!accessAllowed(String(body.code || ''), env)) {
-    return json({ error: 'That invitation code was not accepted.' }, 401);
-  }
-  return json({ ok: true });
+  return json({ ok: true, openAccess: true });
 }
 
 async function handleBridge(request, env) {
   if (request.method !== 'POST') return json({ error: 'Method not allowed.' }, 405);
   const form = await request.formData();
-  const code = readString(form, 'code');
-  if (!accessAllowed(code, env)) {
-    return json({ error: 'That invitation code was not accepted.' }, 401);
-  }
 
   const stage = readString(form, 'stage');
   const story = readString(form, 'story');
@@ -268,17 +244,18 @@ export default {
       if (url.pathname === '/api/status') {
         return json({
           ok: true,
-          accessConfigured: Boolean(env.BRIDGE_ACCESS_CODE),
+          openAccess: true,
+          accessConfigured: true,
           aiConfigured: Boolean(env.OPENAI_API_KEY),
           model: env.OPENAI_MODEL || 'gpt-5-mini'
         });
       }
-      if (url.pathname === '/api/access') return await handleAccess(request, env);
+      if (url.pathname === '/api/access') return await handleAccess(request);
       if (url.pathname === '/api/bridge') return await handleBridge(request, env);
       const asset = await env.ASSETS.fetch(request);
       return secureHeaders(asset, url.pathname);
     } catch (error) {
-      return json({ error: 'The bridge could not complete this request. No document content was intentionally saved by the application.', detail: error?.message || 'Unknown error' }, 500);
+      return json({ error: 'The bridge could not complete this request.', detail: error?.message || 'Unknown error' }, 500);
     }
   }
 };
