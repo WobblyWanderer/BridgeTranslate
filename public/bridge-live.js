@@ -3,11 +3,15 @@
   const accessButton = document.getElementById('access');
   const mapButton = document.getElementById('map');
   const draftButton = document.getElementById('draft');
+  const wordButton = document.getElementById('word');
   const mapStatus = document.getElementById('map-status');
   const codeInput = document.getElementById('code');
   const codeLabel = document.querySelector('label[for="code"]');
   const codeError = document.getElementById('code-error');
   const accessStep = document.querySelector('[data-step="2"]');
+  const MAX_FILES = 5;
+  const MAX_FILE_BYTES = 8 * 1024 * 1024;
+  const MAX_TOTAL_BYTES = 20 * 1024 * 1024;
   let live = false;
 
   codeInput.value = 'cloudflare-access';
@@ -20,9 +24,16 @@
     const paragraph = accessStep.querySelector('h2 + p');
     if (eyebrow) eyebrow.textContent = 'Pilot access';
     if (heading) heading.textContent = 'Continue to BridgeTranslate';
-    if (paragraph) paragraph.textContent = 'Your invitation is checked by Cloudflare before this page loads. This pilot allows five completed documents per approved user.';
+    if (paragraph) paragraph.textContent = 'Your invitation is checked by Cloudflare before this page loads. This proof of concept allows five completed documents per approved user.';
   }
   accessButton.textContent = 'I understand, continue';
+
+  const uploadHeading = document.querySelector('[data-step="4"] h2');
+  if (uploadHeading) {
+    const uploadIntro = uploadHeading.nextElementSibling;
+    if (uploadIntro) uploadIntro.textContent = 'You can add up to 5 files. Each file can be up to 8 MB, with a maximum combined upload of 20 MB. Context and evidence stay in separate lanes.';
+  }
+  if (wordButton) wordButton.textContent = '📘 Download Word document (.docx)';
 
   function setBusy(button, busy, label) {
     button.disabled = busy;
@@ -47,13 +58,28 @@
       ...options,
       headers: { ...(options.headers || {}), accept: 'application/json' }
     });
-    const payload = await response.json().catch(() => ({}));
+    const contentType = response.headers.get('content-type') || '';
+    const payload = contentType.includes('application/json') ? await response.json().catch(() => ({})) : await response.blob();
     if (!response.ok) throw new Error(payload.error || `Request failed (${response.status}).`);
     return payload;
   }
 
   function selected(name) {
     return [...document.querySelectorAll(`input[name="${name}"]:checked`)].map((input) => input.value);
+  }
+
+  function allSelectedFiles() {
+    return ['context', 'evidence'].flatMap((id) => [...(document.getElementById(id).files || [])]);
+  }
+
+  function validateFiles() {
+    const files = allSelectedFiles();
+    if (files.length > MAX_FILES) return `Choose no more than ${MAX_FILES} files across both upload boxes.`;
+    const oversized = files.find((file) => file.size > MAX_FILE_BYTES);
+    if (oversized) return `${oversized.name} is larger than 8 MB.`;
+    const total = files.reduce((sum, file) => sum + file.size, 0);
+    if (total > MAX_TOTAL_BYTES) return 'The selected files are larger than 20 MB combined.';
+    return '';
   }
 
   function appendFiles(form, fieldName, inputId) {
@@ -66,7 +92,7 @@
       const status = await api('/api/status');
       live = Boolean(status.aiConfigured && status.usageConfigured && status.identityConfirmed);
       if (live) {
-        notice.innerHTML = `<strong>Peer proof of concept:</strong> BridgeTranslate demonstrates that organisations can adopt accessible translation workflows instead of requiring service users to build their own aids. ${quotaText(status)}`;
+        notice.innerHTML = `<strong>Proof of concept:</strong> BridgeTranslate demonstrates that any organisation could adopt this method, or one like it, to make its processes accessible. Service users should not have to build translation aids to access basic services. ${quotaText(status)}`;
       } else if (!status.aiConfigured) {
         notice.innerHTML = '<strong>Setup incomplete:</strong> the interface is available, but the AI secret has not been connected.';
       } else {
@@ -86,11 +112,7 @@
     if (!consent.checked) return consent.focus();
     setBusy(accessButton, true, 'Opening bridge…');
     try {
-      await api('/api/access', {
-        method: 'POST',
-        headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ acknowledged: true })
-      });
+      await api('/api/access', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ acknowledged: true }) });
       window.show(3);
     } catch (errorValue) {
       window.alert(errorValue.message);
@@ -103,6 +125,11 @@
     if (!live) return;
     event.preventDefault();
     event.stopImmediatePropagation();
+    const fileError = validateFiles();
+    if (fileError) {
+      mapStatus.textContent = fileError;
+      return;
+    }
     const form = new FormData();
     form.set('stage', 'map');
     form.set('story', document.getElementById('story').value);
@@ -137,9 +164,7 @@
       const result = await api('/api/bridge', { method: 'POST', body: form });
       document.getElementById('draft-output').value = result.text;
       const status = document.getElementById('status');
-      if (status && Number.isFinite(result.documentsRemaining)) {
-        status.textContent = `${result.documentsRemaining} of ${result.documentsLimit} completed documents remain.`;
-      }
+      if (status && Number.isFinite(result.documentsRemaining)) status.textContent = `${result.documentsRemaining} of ${result.documentsLimit} completed documents remain.`;
       window.show(8);
     } catch (errorValue) {
       window.alert(errorValue.message);
@@ -169,6 +194,36 @@
       }
     }, true);
   });
+
+  if (wordButton) {
+    wordButton.addEventListener('click', async (event) => {
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      const status = document.getElementById('status');
+      const text = document.getElementById('draft-output').value;
+      setBusy(wordButton, true, 'Building Word document…');
+      try {
+        const blob = await api('/api/document', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ title: 'BridgeTranslate document', text })
+        });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'bridge-translation.docx';
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+        status.textContent = 'Word document downloaded.';
+      } catch (errorValue) {
+        status.textContent = errorValue.message;
+      } finally {
+        setBusy(wordButton, false);
+      }
+    }, true);
+  }
 
   connectStatus();
 })();
