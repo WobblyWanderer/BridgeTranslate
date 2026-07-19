@@ -1,5 +1,9 @@
+import { Document, HeadingLevel, Packer, Paragraph, TextRun } from 'docx';
 import { BRIDGE_SYSTEM_CONTEXT } from './bridge-context.js';
 
+const MAX_FILES = 5;
+const MAX_FILE_BYTES = 8 * 1024 * 1024;
+const MAX_TOTAL_BYTES = 20 * 1024 * 1024;
 const MAX_DOCUMENTS_PER_USER = 5;
 
 const JSON_HEADERS = {
@@ -18,13 +22,8 @@ function secureHeaders(response, pathname) {
   headers.set('x-content-type-options', 'nosniff');
   headers.set('referrer-policy', 'no-referrer');
   headers.set('permissions-policy', 'camera=(), geolocation=(), payment=(), usb=()');
-  headers.set(
-    'content-security-policy',
-    "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; connect-src 'self'"
-  );
-  if (pathname === '/' || pathname.endsWith('.html')) {
-    headers.set('cache-control', 'no-cache');
-  }
+  headers.set('content-security-policy', "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; connect-src 'self'");
+  if (pathname === '/' || pathname.endsWith('.html')) headers.set('cache-control', 'no-cache');
   return new Response(response.body, { status: response.status, statusText: response.statusText, headers });
 }
 
@@ -75,9 +74,7 @@ function arrayBufferToBase64(buffer) {
   const bytes = new Uint8Array(buffer);
   let binary = '';
   const chunkSize = 0x8000;
-  for (let index = 0; index < bytes.length; index += chunkSize) {
-    binary += String.fromCharCode(...bytes.subarray(index, index + chunkSize));
-  }
+  for (let index = 0; index < bytes.length; index += chunkSize) binary += String.fromCharCode(...bytes.subarray(index, index + chunkSize));
   return btoa(binary);
 }
 
@@ -87,29 +84,27 @@ function isImage(file) {
 
 async function filePart(file, role) {
   const base64 = arrayBufferToBase64(await file.arrayBuffer());
-  if (isImage(file)) {
-    return {
-      type: 'input_image',
-      image_url: `data:${file.type || 'application/octet-stream'};base64,${base64}`,
-      detail: 'auto'
-    };
-  }
-  return {
-    type: 'input_file',
-    filename: `[${role}] ${file.name}`,
-    file_data: base64
-  };
+  if (isImage(file)) return { type: 'input_image', image_url: `data:${file.type || 'application/octet-stream'};base64,${base64}`, detail: 'auto' };
+  return { type: 'input_file', filename: `[${role}] ${file.name}`, file_data: base64 };
 }
 
 async function collectFiles(form, fieldName, role) {
   const values = form.getAll(fieldName);
   const parts = [];
   for (const value of values) {
-    if (value instanceof File && value.size > 0) {
-      parts.push(await filePart(value, role));
-    }
+    if (value instanceof File && value.size > 0) parts.push(await filePart(value, role));
   }
   return parts;
+}
+
+function validateUploads(form) {
+  const files = ['context', 'evidence'].flatMap((field) => form.getAll(field)).filter((value) => value instanceof File && value.size > 0);
+  if (files.length > MAX_FILES) return `This pilot accepts a maximum of ${MAX_FILES} files in one packet.`;
+  const oversized = files.find((file) => file.size > MAX_FILE_BYTES);
+  if (oversized) return `${oversized.name} is larger than the 8 MB individual-file limit.`;
+  const total = files.reduce((sum, file) => sum + file.size, 0);
+  if (total > MAX_TOTAL_BYTES) return 'The selected files are larger than the 20 MB combined-upload limit.';
+  return '';
 }
 
 function mapPrompt({ story, outcome, communication, contextNames, evidenceNames }) {
@@ -171,43 +166,23 @@ function extractOutputText(payload) {
   const pieces = [];
   for (const item of payload.output || []) {
     for (const content of item.content || []) {
-      if (content.type === 'output_text' && typeof content.text === 'string') {
-        pieces.push(content.text);
-      }
+      if (content.type === 'output_text' && typeof content.text === 'string') pieces.push(content.text);
     }
   }
   return pieces.join('\n').trim();
 }
 
 async function callOpenAI(env, content) {
-  if (!env.OPENAI_API_KEY) {
-    return { ok: false, status: 503, error: 'The AI connection has not been configured yet.' };
-  }
-
+  if (!env.OPENAI_API_KEY) return { ok: false, status: 503, error: 'The AI connection has not been configured yet.' };
   const response = await fetch('https://api.openai.com/v1/responses', {
     method: 'POST',
-    headers: {
-      authorization: `Bearer ${env.OPENAI_API_KEY}`,
-      'content-type': 'application/json'
-    },
-    body: JSON.stringify({
-      model: env.OPENAI_MODEL || 'gpt-5-mini',
-      instructions: BRIDGE_SYSTEM_CONTEXT,
-      input: [{ role: 'user', content }],
-      store: false
-    })
+    headers: { authorization: `Bearer ${env.OPENAI_API_KEY}`, 'content-type': 'application/json' },
+    body: JSON.stringify({ model: env.OPENAI_MODEL || 'gpt-5-mini', instructions: BRIDGE_SYSTEM_CONTEXT, input: [{ role: 'user', content }], store: false })
   });
-
   const payload = await response.json().catch(() => ({}));
-  if (!response.ok) {
-    const providerMessage = payload?.error?.message || `The AI provider returned HTTP ${response.status}.`;
-    return { ok: false, status: 502, error: providerMessage };
-  }
-
+  if (!response.ok) return { ok: false, status: 502, error: payload?.error?.message || `The AI provider returned HTTP ${response.status}.` };
   const text = extractOutputText(payload);
-  if (!text) {
-    return { ok: false, status: 502, error: 'The AI provider returned no usable text.' };
-  }
+  if (!text) return { ok: false, status: 502, error: 'The AI provider returned no usable text.' };
   return { ok: true, text };
 }
 
@@ -218,14 +193,9 @@ async function handleAccess(request) {
 
 async function handleBridge(request, env) {
   if (request.method !== 'POST') return json({ error: 'Method not allowed.' }, 405);
-
   const email = authenticatedEmail(request);
-  if (!email) {
-    return json({ error: 'Your Cloudflare Access identity could not be confirmed.' }, 401);
-  }
-  if (!env.USAGE_KV) {
-    return json({ error: 'The pilot usage counter has not been configured yet.' }, 503);
-  }
+  if (!email) return json({ error: 'Your Cloudflare Access identity could not be confirmed.' }, 401);
+  if (!env.USAGE_KV) return json({ error: 'The pilot usage counter has not been configured yet.' }, 503);
 
   const form = await request.formData();
   const stage = readString(form, 'stage');
@@ -236,45 +206,29 @@ async function handleBridge(request, env) {
   const refinement = readString(form, 'refinement');
   const communication = readJsonArray(form, 'communication');
   const destinations = readJsonArray(form, 'destinations');
-
   const documentsUsed = await readUsage(env, email);
+
   if (stage === 'draft' && documentsUsed >= MAX_DOCUMENTS_PER_USER) {
-    return json({
-      error: 'This proof-of-concept invitation has already produced its five documents.',
-      documentsUsed,
-      documentsLimit: MAX_DOCUMENTS_PER_USER,
-      documentsRemaining: 0
-    }, 429);
+    return json({ error: 'This proof-of-concept invitation has already produced its five documents.', documentsUsed, documentsLimit: MAX_DOCUMENTS_PER_USER, documentsRemaining: 0 }, 429);
   }
 
-  let textPrompt = '';
   let content = [];
-
   if (stage === 'map') {
+    const uploadError = validateUploads(form);
+    if (uploadError) return json({ error: uploadError }, 400);
     const contextValues = form.getAll('context').filter((value) => value instanceof File && value.size > 0);
     const evidenceValues = form.getAll('evidence').filter((value) => value instanceof File && value.size > 0);
-    textPrompt = mapPrompt({
-      story,
-      outcome,
-      communication,
-      contextNames: contextValues.map((file) => file.name),
-      evidenceNames: evidenceValues.map((file) => file.name)
-    });
     content = [
-      { type: 'input_text', text: textPrompt },
+      { type: 'input_text', text: mapPrompt({ story, outcome, communication, contextNames: contextValues.map((file) => file.name), evidenceNames: evidenceValues.map((file) => file.name) }) },
       ...(await collectFiles(form, 'context', 'COMMUNICATION CONTEXT')),
       ...(await collectFiles(form, 'evidence', 'DOCUMENTARY EVIDENCE'))
     ];
   } else if (stage === 'draft') {
     if (!confirmedMeaning) return json({ error: 'Confirm or edit the meaning map first.' }, 400);
-    textPrompt = draftPrompt({ confirmedMeaning, destinations });
-    content = [{ type: 'input_text', text: textPrompt }];
+    content = [{ type: 'input_text', text: draftPrompt({ confirmedMeaning, destinations }) }];
   } else if (stage === 'refine') {
-    if (!confirmedMeaning || !draft || !refinement) {
-      return json({ error: 'A confirmed meaning map, current draft and requested change are required.' }, 400);
-    }
-    textPrompt = refinePrompt({ confirmedMeaning, draft, refinement });
-    content = [{ type: 'input_text', text: textPrompt }];
+    if (!confirmedMeaning || !draft || !refinement) return json({ error: 'A confirmed meaning map, current draft and requested change are required.' }, 400);
+    content = [{ type: 'input_text', text: refinePrompt({ confirmedMeaning, draft, refinement }) }];
   } else {
     return json({ error: 'Unknown bridge stage.' }, 400);
   }
@@ -287,33 +241,61 @@ async function handleBridge(request, env) {
     updatedDocumentsUsed += 1;
     await env.USAGE_KV.put(usageKey(email), String(updatedDocumentsUsed));
   }
+  return json({ ok: true, stage, text: result.text, documentsUsed: updatedDocumentsUsed, documentsLimit: MAX_DOCUMENTS_PER_USER, documentsRemaining: Math.max(0, MAX_DOCUMENTS_PER_USER - updatedDocumentsUsed) });
+}
 
-  return json({
-    ok: true,
-    stage,
-    text: result.text,
-    documentsUsed: updatedDocumentsUsed,
-    documentsLimit: MAX_DOCUMENTS_PER_USER,
-    documentsRemaining: Math.max(0, MAX_DOCUMENTS_PER_USER - updatedDocumentsUsed)
+function docxParagraphs(text) {
+  return text.split(/\r?\n/).map((line) => {
+    const trimmed = line.trim();
+    if (!trimmed) return new Paragraph({ text: '' });
+    const isHeading = trimmed.length <= 90 && trimmed === trimmed.toUpperCase() && /[A-Z]/.test(trimmed);
+    if (isHeading) return new Paragraph({ text: trimmed, heading: HeadingLevel.HEADING_1, spacing: { before: 240, after: 120 } });
+    return new Paragraph({ children: [new TextRun(trimmed)], spacing: { after: 120 } });
   });
+}
+
+async function handleDocument(request) {
+  if (request.method !== 'POST') return json({ error: 'Method not allowed.' }, 405);
+  const payload = await request.json().catch(() => ({}));
+  const text = typeof payload.text === 'string' ? payload.text.trim() : '';
+  const title = typeof payload.title === 'string' && payload.title.trim() ? payload.title.trim().slice(0, 120) : 'BridgeTranslate document';
+  if (!text) return json({ error: 'There is no completed draft to download.' }, 400);
+  if (text.length > 250000) return json({ error: 'The completed document is too large to export in this pilot.' }, 400);
+  const document = new Document({
+    creator: 'BridgeTranslate',
+    title,
+    description: 'A user-reviewed communication document produced through BridgeTranslate.',
+    sections: [{ properties: {}, children: [
+      new Paragraph({ text: title, heading: HeadingLevel.TITLE, spacing: { after: 300 } }),
+      ...docxParagraphs(text),
+      new Paragraph({ children: [new TextRun({ text: 'Produced with BridgeTranslate. Review before sending.', italics: true })], spacing: { before: 360 } })
+    ] }]
+  });
+  const buffer = await Packer.toBuffer(document);
+  return new Response(buffer, { headers: {
+    'content-type': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    'content-disposition': 'attachment; filename="bridge-translation.docx"',
+    'cache-control': 'no-store',
+    'x-content-type-options': 'nosniff'
+  } });
 }
 
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
     try {
-      if (url.pathname === '/api/status') {
-        return json({
-          ok: true,
-          openAccess: false,
-          accessConfigured: Boolean(authenticatedEmail(request)),
-          aiConfigured: Boolean(env.OPENAI_API_KEY),
-          model: env.OPENAI_MODEL || 'gpt-5-mini',
-          ...(await usageStatus(request, env))
-        });
-      }
+      if (url.pathname === '/api/status') return json({
+        ok: true,
+        openAccess: false,
+        accessConfigured: Boolean(authenticatedEmail(request)),
+        aiConfigured: Boolean(env.OPENAI_API_KEY),
+        model: env.OPENAI_MODEL || 'gpt-5-mini',
+        limits: { maxFiles: MAX_FILES, maxIndividualMB: 8, maxCombinedMB: 20, maxDocuments: MAX_DOCUMENTS_PER_USER },
+        ...(await usageStatus(request, env))
+      });
       if (url.pathname === '/api/access') return await handleAccess(request);
       if (url.pathname === '/api/bridge') return await handleBridge(request, env);
+      if (url.pathname === '/api/document') return await handleDocument(request);
       const asset = await env.ASSETS.fetch(request);
       return secureHeaders(asset, url.pathname);
     } catch (error) {
