@@ -1,0 +1,188 @@
+{
+  "version": "0.2",
+  "purpose": "Provider-neutral translation aid data for BridgeTranslate implementations.",
+  "default_behaviours": [
+    "assume_competence",
+    "capture_network_before_sequence",
+    "accept_functional_descriptions",
+    "explain_hidden_question_function",
+    "preserve_user_voice_and_agency",
+    "separate_context_account_evidence_inference",
+    "mark_uncertainty_instead_of_guessing",
+    "confirm_meaning_before_drafting",
+    "never_require_speech_or_diagnosis"
+  ],
+  "aids": [
+    {
+      "id": "functional_relational_naming",
+      "category": "retrieval",
+      "icon": "🧭",
+      "plain_label": "I describe things by what they do or how I know them",
+      "bracket_label": "functional circumlocution / relational indexing",
+      "example": "I may remember the role, story, location or function before the formal name.",
+      "bridge_action": "Match the description to supplied context or evidence, propose a supported label, and never invent a proper name."
+    },
+    {
+      "id": "networked_mapping",
+      "category": "thinking",
+      "icon": "🕸️",
+      "plain_label": "My thoughts arrive as a connected map",
+      "bracket_label": "gestalt / networked association",
+      "example": "Several linked details may arrive before the central point becomes visible.",
+      "bridge_action": "Capture all nodes and relationships before creating chronology or categories."
+    },
+    {
+      "id": "sequencing_support",
+      "category": "thinking",
+      "icon": "🌀",
+      "plain_label": "My information comes out in a different order",
+      "bracket_label": "sequencing / executive function",
+      "example": "Please organise it without deleting context that arrived early or late.",
+      "bridge_action": "Sequence the account after mapping and show the result back to the user."
+    },
+    {
+      "id": "procedural_without_labels",
+      "category": "thinking",
+      "icon": "⚙️",
+      "plain_label": "I can understand or do it but cannot name the formal rule",
+      "bracket_label": "procedural competence / declarative label gap",
+      "example": "I may use language or systems accurately without knowing the textbook term.",
+      "bridge_action": "Supply optional external labels without testing or downgrading the user's competence."
+    },
+    {
+      "id": "institutional_hidden_function",
+      "category": "institutional",
+      "icon": "📚",
+      "plain_label": "I understand the words but not what the form is really asking",
+      "bracket_label": "institutional / pragmatic translation",
+      "example": "Explain the function of the question before asking me to answer it.",
+      "bridge_action": "State the hidden format, evidence or outcome the question requests in concrete language."
+    },
+    {
+      "id": "concrete_anchoring",
+      "category": "thinking",
+      "icon": "🗺️",
+      "plain_label": "Abstract ideas need a map, example or practical anchor",
+      "bracket_label": "concrete / visual systems processing",
+      "example": "I understand better when the idea has a structure, example or observable effect.",
+      "bridge_action": "Translate abstraction into examples, flows, maps or practical prompts."
+    },
+    {
+      "id": "delayed_processing",
+      "category": "retrieval",
+      "icon": "⏳",
+      "plain_label": "Important context may arrive later",
+      "bracket_label": "delayed / distributed processing",
+      "example": "A word, date, connection or feeling may become available after I begin answering.",
+      "bridge_action": "Allow additions and corrections without treating them as automatic inconsistency."
+    },
+    {
+      "id": "memory_under_pressure",
+      "category": "load",
+      "icon": "🧠",
+      "plain_label": "Pressure makes recall less reliable",
+      "bracket_label": "working-memory / retrieval load",
+      "example": "I may know the information but lose access to it during conflict, urgency or questioning.",
+      "bridge_action": "Use written recognition prompts, allow pauses, and mark uncertain recall rather than forcing certainty."
+    },
+    {
+      "id": "date_time_uncertainty",
+      "category": "retrieval",
+      "icon": "🕰️",
+      "plain_label": "Dates and sequence are hard to retrieve",
+      "bracket_label": "time processing / episodic sequencing",
+      "example": "I may remember the event and relationships more clearly than the exact date.",
+      "bridge_action": "Use documents to anchor dates and otherwise label the date as approximate or unclear."
+    },
+    {
+      "id": "alexithymia",
+      "category": "feelings_body",
+      "icon": "🌫️",
+      "plain_label": "Feelings are hard to identify or name",
+      "bracket_label": "alexithymia",
+      "example": "I may recognise impact or urgency before I can label the emotion.",
+      "bridge_action": "Accept observable impact and do not force or invent an emotional label."
+    },
+    {
+      "id": "interoception",
+      "category": "feelings_body",
+      "icon": "🌡️",
+      "plain_label": "Body signals are hard to identify or explain",
+      "bracket_label": "interoception",
+      "example": "I may notice a change in function before I can describe the sensation.",
+      "bridge_action": "Separate observed function, possible sensation and confirmed interpretation."
+    },
+    {
+      "id": "stress_changes_access",
+      "category": "load",
+      "icon": "⚡",
+      "plain_label": "Stress changes how well I can communicate",
+      "bracket_label": "state-dependent communication access",
+      "example": "I may lose words, speech, memory or sequencing when overloaded.",
+      "bridge_action": "Keep the route written, pause-friendly and low-density."
+    },
+    {
+      "id": "sensory_load",
+      "category": "load",
+      "icon": "🎧",
+      "plain_label": "Sensory load reduces my communication capacity",
+      "bracket_label": "sensory processing load",
+      "example": "Noise, light, movement, pain or crowded information may reduce access to words and decisions.",
+      "bridge_action": "Reduce density and decisions and preserve information about the conditions affecting access."
+    },
+    {
+      "id": "style_fluidity",
+      "category": "language",
+      "icon": "🎭",
+      "plain_label": "My tone, accent or wording changes with the person or setting",
+      "bracket_label": "mirroring / dialect fluidity / code-switching",
+      "example": "The style may change while the underlying meaning remains stable.",
+      "bridge_action": "Do not treat register variation as deception; translate for the intended audience while preserving meaning."
+    },
+    {
+      "id": "written_only",
+      "category": "communication_method",
+      "icon": "✍️",
+      "plain_label": "I communicate only or most reliably in writing",
+      "bracket_label": "written / non-speaking communication",
+      "example": "Do not require a voice response or telephone conversation.",
+      "bridge_action": "Keep every instruction, question, consent and correction available in writing."
+    },
+    {
+      "id": "aac_supported",
+      "category": "communication_method",
+      "icon": "💬",
+      "plain_label": "I use AAC, selected options or another person to support communication",
+      "bracket_label": "AAC / supported communication",
+      "example": "Typed, symbol-based, selected or supported input is my communication.",
+      "bridge_action": "Address the user directly and accept the chosen communication method as valid."
+    },
+    {
+      "id": "dense_text",
+      "category": "reading_language",
+      "icon": "🔤",
+      "plain_label": "Reading dense text is difficult",
+      "bracket_label": "dyslexia / visual or language processing",
+      "example": "Use short sections, clear spacing and concrete language.",
+      "bridge_action": "Reduce text density without deleting necessary meaning."
+    },
+    {
+      "id": "additional_language",
+      "category": "reading_language",
+      "icon": "🌍",
+      "plain_label": "English is not my first or strongest language",
+      "bracket_label": "multilingual / English as an additional language",
+      "example": "Avoid unnecessary idioms and ask before replacing culturally specific meaning.",
+      "bridge_action": "Use clear language and label translation uncertainty separately from event uncertainty."
+    },
+    {
+      "id": "unsure",
+      "category": "exploring",
+      "icon": "❓",
+      "plain_label": "I am not sure which description fits",
+      "bracket_label": "exploring / undiagnosed / mixed pattern",
+      "example": "Help me recognise useful support without requiring a label.",
+      "bridge_action": "Offer concrete examples and let the user select what helps."
+    }
+  ]
+}

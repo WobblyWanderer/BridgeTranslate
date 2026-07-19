@@ -1,167 +1,87 @@
-# BridgeTranslate Closed Beta Plan
+# BridgeTranslate peer proof-of-concept plan
 
-## Goal
+This file replaces the earlier Streamlit-specific plan.
 
-Deploy a closed, code-gated tester version that proves the core loop:
+BridgeTranslate is not defined by Python, Streamlit, Cloudflare, OpenAI or any other single provider. It is a reusable communication crossing with one hosted peer implementation and a platform-neutral organisational specification.
+
+## Current build
+
+The `poc-v2-evidence-depot` branch now contains:
+
+- `public/index.html`: the approved, icon-led peer crossing;
+- `public/bridge-live.js`: live access, meaning-map, drafting and refinement controls;
+- `src/index.js`: the server-side bridge API reference;
+- `src/live-index.js`: the Cloudflare page wrapper;
+- `src/bridge-context.js`: universal translation instructions derived from Granny and Vector Keel principles;
+- `specification/TRANSLATION_AIDS.md`: human-readable translation rules;
+- `specification/translation-aids.json`: reusable implementation data;
+- `wrangler.jsonc`: Cloudflare Workers static-assets configuration.
+
+## User crossing
 
 ```text
-natural account + small evidence bundle
-                ↓
-source-aware mapping
-                ↓
-editable destination-specific document
-                ↓
-download and erase
+welcome and consent
+        ↓
+optional communication aids
+        ↓
+Context / About Me + evidence
+        ↓
+natural account
+        ↓
+AI meaning map
+        ↓
+user confirms or edits meaning
+        ↓
+destination-specific draft
+        ↓
+user refines and confirms
+        ↓
+copy, text, Word-compatible or PDF output
 ```
 
-## Phase 1: Interface and session gate
+## Peer-hosted reference
 
-- Add a first-screen access-code field
-- Validate against hashed tester codes stored in Streamlit secrets
-- Create a signed, short-lived session state after successful entry
-- Add rate limiting for failed code attempts
-- Add progress steps
-- Replace diagnosis-first multiselect with icon-led communication-pattern cards
-- Add an expandable optional section for named traits or diagnoses
+The Cloudflare reference uses:
 
-## Phase 2: One-shot job intake
+- ordinary HTML, CSS and JavaScript;
+- a Cloudflare Worker as the server-side access and AI adapter;
+- secrets named `BRIDGE_ACCESS_CODE` and `OPENAI_API_KEY`;
+- optional `OPENAI_MODEL` configuration;
+- no application database for user documents or generated content;
+- direct active-job processing with `store: false` in the OpenAI Responses request;
+- no product-level file count or file-size rule invented in advance.
 
-- Select the intended output using icon-led cards
-- Large natural-language story field
-- Optional context field for recipient, deadline, desired outcome, and word limit
-- Upload up to 10 supported files
-- Display file count, file names, and total size before processing
-- Require confirmation of the privacy warning
+The hosting and AI providers may still process or retain operational information under their own policies. The interface must state that accurately.
 
-## Phase 3: Extraction and evidence mapping
+## Organisational adoption
 
-- Extract text from TXT, DOCX, and text-based PDFs
-- Send images and screenshots through a vision-capable model
-- Create a structured internal evidence map containing:
-  - source ID
-  - filename
-  - page or image reference when available
-  - date or uncertain date
-  - event
-  - people and organisations
-  - evidence strength
-  - contradiction or uncertainty note
-- Reject unsupported or oversized files with a clear explanation
-- Treat OCR as a fallback rather than the default
+Organisations may adopt:
 
-## Phase 4: Translation output
+1. the user journey only;
+2. the translation-aid data and system context;
+3. the complete reference webpage;
+4. the API contract with a different model provider;
+5. the whole package inside infrastructure they control.
 
-- Generate the selected output type
-- Include source references where appropriate
-- Add a visible uncertainty and missing-information section
-- Show the output in an editable text area
-- Permit revisions during the same session without consuming another credit
+An adopting organisation remains responsible for authentication, security, retention, accessibility testing, data protection, lawful basis, incident response and professional review requirements.
 
-## Phase 5: Export and erasure
+## Immediate remaining gates
 
-- Download DOCX
-- Download PDF
-- Download TXT
-- Add `Erase this session now`
-- Clear uploaded files, extracted text, evidence map, and generated output from session state
-- Display an explicit confirmation after erasure
+1. Deploy the branch to a private Cloudflare preview.
+2. Add the two secrets without placing them in GitHub.
+3. Test with invented or deliberately redacted material.
+4. Confirm which real file types the selected AI model handles reliably.
+5. Run peer tests on phone, tablet, keyboard-only navigation and screen zoom.
+6. Correct friction before widening access.
 
-## Phase 6: Tester feedback
+## Non-negotiable stop conditions
 
-Add a short feedback panel:
+Do not widen access if:
 
-- Did the output preserve what you meant?
-- Did it invent or omit anything?
-- Could you understand the choices without reading every word?
-- Which step created friction?
-- Would you trust yourself to edit and use the result?
-
-For the closed beta, feedback may go to a simple external form rather than being stored in the app.
-
-## Initial code model
-
-For the first beta, store code hashes and remaining credits in deployment secrets.
-
-Example conceptual structure:
-
-```toml
-[tester_codes]
-"sha256-hash-of-code-a" = 3
-"sha256-hash-of-code-b" = 3
-```
-
-This is acceptable only for a small tester group because changing balances requires updating secrets or using a minimal database.
-
-Preferred next step after the first test:
-
-- SQLite is not reliable for persistent Streamlit Community Cloud state
-- Move entitlements to a managed store such as Supabase, Neon/Postgres, or another small hosted database
-- Store only hashed code, credit balance, status, and timestamps
-
-## Hosting recommendation
-
-### Closed beta
-
-Use:
-
-- Private GitHub repository
-- Streamlit Community Cloud
-- Public Streamlit app URL with an in-app tester-code gate
-- Streamlit secrets for the OpenAI key and initial tester-code hashes
-
-This is the lowest-friction route for the current Python/Streamlit application.
-
-### Later production service
-
-Reassess hosting when the app needs:
-
-- paid credits
-- reliable entitlement storage
-- background document processing
-- larger uploads
-- strict deletion guarantees
-- custom domain and branding
-- stronger observability
-- formal data-processing controls
-
-At that stage use a conventional backend or container host, object storage with lifecycle deletion, and a managed database.
-
-## Deployment checklist
-
-- [ ] App runs locally
-- [ ] No real key exists in GitHub history
-- [ ] `.env` and `.streamlit/secrets.toml` are ignored
-- [ ] OpenAI key added in Streamlit secrets
-- [ ] Random tester codes generated offline
-- [ ] Only code hashes added to deployment secrets
-- [ ] Upload size and count limits enforced
-- [ ] Privacy warning displayed before upload
-- [ ] Output warns users to check before sending
-- [ ] Erase-session path tested
-- [ ] Phone, tablet, keyboard-only, zoom, and screen-reader smoke tests completed
-- [ ] Three test cases run end-to-end
-
-## Three essential test cases
-
-### Test A: interpersonal
-
-A nonlinear account with no files produces a concise message to a friend while preserving boundaries and emotional meaning.
-
-### Test B: institutional
-
-A natural account plus three emails produces a chronology, evidence index, and complaint draft without inventing dates or duties.
-
-### Test C: benefits or health form
-
-A natural account plus supporting documents produces a form-focused answer that distinguishes reported experience from documentary evidence and highlights missing information.
-
-## Stop conditions
-
-Do not invite a wider tester group if any of these occur:
-
-- uploaded content appears in another user's session
-- the app exposes secrets or raw tester codes
-- outputs repeatedly invent dates, quotations, or evidence
-- erasure does not clear the active session
-- the app silently drops uploaded files
-- a user cannot tell which claims came from which source
+- material from one session appears in another;
+- secrets or invitation codes are exposed;
+- files are silently dropped;
+- the bridge invents dates, names, quotations, evidence or legal duties;
+- users cannot distinguish their account from documentary evidence or inference;
+- the meaning-confirmation loop can be bypassed;
+- erase-session behaviour is misleading.

@@ -1,0 +1,157 @@
+{
+  "version": "0.1",
+  "purpose": "Reusable, diagnosis-optional communication support cards for BridgeTranslate implementations.",
+  "rules": [
+    "Display the plain label first and the explanatory label in brackets.",
+    "Treat bracketed labels as optional navigation aids, not diagnoses.",
+    "Allow multiple selections and a complete skip.",
+    "Never require speech, a diagnosis, or disclosure of disability.",
+    "Preserve the user's selected communication method throughout the crossing."
+  ],
+  "options": [
+    {
+      "id": "connected_thoughts",
+      "category": "thinking",
+      "icon": "🕸️",
+      "plain_label": "My thoughts arrive connected",
+      "bracket_label": "gestalt / networked thinking",
+      "example": "I may explain several linked things before the main point becomes visible."
+    },
+    {
+      "id": "word_retrieval",
+      "category": "thinking",
+      "icon": "🔎",
+      "plain_label": "I know what I mean but cannot find the word",
+      "bracket_label": "word retrieval / dysnomia",
+      "example": "I may describe a person, object or role by its function, story or relationship."
+    },
+    {
+      "id": "sequencing",
+      "category": "thinking",
+      "icon": "🌀",
+      "plain_label": "My information comes out in a different order",
+      "bracket_label": "sequencing / executive function",
+      "example": "Please organise it without removing useful context."
+    },
+    {
+      "id": "institutional_translation",
+      "category": "thinking",
+      "icon": "📚",
+      "plain_label": "I understand complex ideas but forms confuse me",
+      "bracket_label": "hyperlexia / institutional translation",
+      "example": "I may understand the subject while not understanding what the question expects."
+    },
+    {
+      "id": "delayed_processing",
+      "category": "thinking",
+      "icon": "⏳",
+      "plain_label": "I need time before the full explanation arrives",
+      "bracket_label": "delayed processing",
+      "example": "Important context may become available after I have started answering."
+    },
+    {
+      "id": "concrete_visual_processing",
+      "category": "thinking",
+      "icon": "🧱",
+      "plain_label": "I understand better through examples, pictures or practical systems",
+      "bracket_label": "concrete or visual processing",
+      "example": "Abstract wording may need a real example or structural map."
+    },
+    {
+      "id": "alexithymia",
+      "category": "feelings_body_stress",
+      "icon": "🌫️",
+      "plain_label": "Feelings are hard to identify or name",
+      "bracket_label": "alexithymia",
+      "example": "I may know something matters before I can label the emotion."
+    },
+    {
+      "id": "interoception",
+      "category": "feelings_body_stress",
+      "icon": "🌡️",
+      "plain_label": "Body signals are hard to identify or explain",
+      "bracket_label": "interoception",
+      "example": "I may notice a change in function before I can describe the sensation."
+    },
+    {
+      "id": "stress_changes_communication",
+      "category": "feelings_body_stress",
+      "icon": "⚡",
+      "plain_label": "Stress changes how well I can communicate",
+      "bracket_label": "processing or regulation load",
+      "example": "I may lose words, speech, memory or sequencing when overloaded."
+    },
+    {
+      "id": "written_only",
+      "category": "communication_method",
+      "icon": "✍️",
+      "plain_label": "I communicate only in writing",
+      "bracket_label": "non-speaking / written communication",
+      "example": "Do not require a voice response or telephone conversation."
+    },
+    {
+      "id": "speech_unreliable",
+      "category": "communication_method",
+      "icon": "🔇",
+      "plain_label": "My speech may stop or become unreliable",
+      "bracket_label": "situational speech loss / intermittent speech",
+      "example": "Writing may remain available when speaking is not."
+    },
+    {
+      "id": "aac_supported",
+      "category": "communication_method",
+      "icon": "💬",
+      "plain_label": "I use a communication aid or another person to support communication",
+      "bracket_label": "AAC / supported communication",
+      "example": "Accept typed, selected, symbol-based or supported input as my own communication."
+    },
+    {
+      "id": "speech_first",
+      "category": "communication_method",
+      "icon": "🎙️",
+      "plain_label": "Speaking is easier than typing",
+      "bracket_label": "speech-first input",
+      "example": "Let me dictate naturally and correct the written result afterwards."
+    },
+    {
+      "id": "text_first",
+      "category": "communication_method",
+      "icon": "⌨️",
+      "plain_label": "Typing is easier than speaking",
+      "bracket_label": "text-first input",
+      "example": "Keep every stage available without voice input."
+    },
+    {
+      "id": "dense_text",
+      "category": "reading_language",
+      "icon": "🔤",
+      "plain_label": "Reading dense text is difficult",
+      "bracket_label": "dyslexia / visual or language processing",
+      "example": "Use short sections, clear spacing and optional explanations."
+    },
+    {
+      "id": "additional_language",
+      "category": "reading_language",
+      "icon": "🌍",
+      "plain_label": "English is not my first or strongest language",
+      "bracket_label": "English as an additional language",
+      "example": "Use clear English and avoid unnecessary idioms."
+    },
+    {
+      "id": "system_intent",
+      "category": "reading_language",
+      "icon": "🧭",
+      "plain_label": "I understand the words but not what the system wants",
+      "bracket_label": "pragmatic or institutional translation",
+      "example": "Explain the function of the question before asking me to answer it."
+    },
+    {
+      "id": "unsure",
+      "category": "reading_language",
+      "icon": "❓",
+      "plain_label": "I am not sure",
+      "bracket_label": "unknown / exploring / undiagnosed",
+      "example": "Help me identify which support patterns fit without requiring a label."
+    }
+  ]
+}

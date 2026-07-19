@@ -1,0 +1,107 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://bridgetranslate.example/specification/input.schema.json",
+  "title": "BridgeTranslate input",
+  "description": "Platform-neutral description of one active BridgeTranslate crossing.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["natural_account", "consent"],
+  "properties": {
+    "session_reference": {
+      "type": "string",
+      "description": "Temporary, non-identifying reference for the active crossing."
+    },
+    "communication_options": {
+      "type": "array",
+      "items": { "type": "string" },
+      "uniqueItems": true,
+      "default": []
+    },
+    "self_described_labels": {
+      "type": "array",
+      "items": { "type": "string" },
+      "uniqueItems": true,
+      "default": [],
+      "description": "Optional labels supplied by the user. These are not required and must not be inferred as diagnoses."
+    },
+    "preferred_input_method": {
+      "type": "string",
+      "enum": ["writing", "speech", "aac", "supported", "mixed", "unspecified"],
+      "default": "unspecified"
+    },
+    "input_language": {
+      "type": "string",
+      "default": "en-GB"
+    },
+    "natural_account": {
+      "type": "string",
+      "description": "The user's account in their own words and order."
+    },
+    "wanted_outcome": {
+      "type": "string",
+      "default": ""
+    },
+    "context_items": {
+      "type": "array",
+      "default": [],
+      "items": { "$ref": "#/$defs/sourceItem" }
+    },
+    "evidence_items": {
+      "type": "array",
+      "default": [],
+      "items": { "$ref": "#/$defs/sourceItem" }
+    },
+    "requested_destinations": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "healthcare",
+          "benefits_form",
+          "public_service",
+          "housing",
+          "employment_adjustments",
+          "complaint_escalation",
+          "timeline_evidence_map",
+          "personal_message",
+          "email_letter",
+          "larger_ai_project",
+          "suggest_format"
+        ]
+      },
+      "uniqueItems": true,
+      "default": ["suggest_format"]
+    },
+    "consent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ai_processing", "review_before_use"],
+      "properties": {
+        "ai_processing": { "type": "boolean", "const": true },
+        "review_before_use": { "type": "boolean", "const": true },
+        "redaction_responsibility_acknowledged": { "type": "boolean" }
+      }
+    }
+  },
+  "$defs": {
+    "sourceItem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source_id", "display_name", "role"],
+      "properties": {
+        "source_id": { "type": "string" },
+        "display_name": { "type": "string" },
+        "role": {
+          "type": "string",
+          "enum": ["communication_context", "user_account", "documentary_evidence", "unknown"]
+        },
+        "media_type": { "type": "string" },
+        "content_reference": {
+          "type": "string",
+          "description": "Implementation-defined temporary reference. Do not require permanent storage."
+        },
+        "user_note": { "type": "string", "default": "" }
+      }
+    }
+  }
+}
