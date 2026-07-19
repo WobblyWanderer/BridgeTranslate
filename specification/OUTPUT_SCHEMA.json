@@ -1,0 +1,99 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://bridgetranslate.example/specification/output.schema.json",
+  "title": "BridgeTranslate output",
+  "description": "Platform-neutral output for the confirmation loop and final destination document.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["stage", "meaning_map", "confirmation_required"],
+  "properties": {
+    "stage": {
+      "type": "string",
+      "enum": ["meaning_map", "final_output"]
+    },
+    "meaning_map": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["what_user_means", "what_happened_or_needs_saying", "why_it_matters", "wanted_outcome", "sources", "uncertainties"],
+      "properties": {
+        "what_user_means": { "type": "string" },
+        "what_happened_or_needs_saying": { "type": "array", "items": { "type": "string" } },
+        "why_it_matters": { "type": "array", "items": { "type": "string" } },
+        "wanted_outcome": { "type": "array", "items": { "type": "string" } },
+        "people_organisations_dates": { "type": "array", "items": { "$ref": "#/$defs/extractedItem" }, "default": [] },
+        "sources": { "type": "array", "items": { "$ref": "#/$defs/sourceFinding" } },
+        "uncertainties": { "type": "array", "items": { "$ref": "#/$defs/uncertainty" } },
+        "written_questions": { "type": "array", "items": { "type": "string" }, "default": [] }
+      }
+    },
+    "confirmation_required": {
+      "type": "boolean",
+      "description": "Must be true at the meaning-map stage. A final output may only be generated after user confirmation or correction."
+    },
+    "confirmation_prompt": {
+      "type": "string",
+      "default": "Is this what you are trying to say or describe?"
+    },
+    "user_confirmed_meaning": {
+      "type": "boolean",
+      "default": false
+    },
+    "final_outputs": {
+      "type": "array",
+      "default": [],
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["destination", "title", "content"],
+        "properties": {
+          "destination": { "type": "string" },
+          "title": { "type": "string" },
+          "content": { "type": "string" },
+          "source_notes": { "type": "array", "items": { "$ref": "#/$defs/sourceFinding" }, "default": [] },
+          "check_before_using": { "type": "array", "items": { "type": "string" }, "default": [] },
+          "suggested_file_types": {
+            "type": "array",
+            "items": { "type": "string", "enum": ["docx", "pdf", "txt", "html", "json"] },
+            "uniqueItems": true,
+            "default": ["docx", "pdf", "txt"]
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "extractedItem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "value", "certainty"],
+      "properties": {
+        "kind": { "type": "string", "enum": ["person", "organisation", "date", "deadline", "reference", "other"] },
+        "value": { "type": "string" },
+        "certainty": { "type": "string", "enum": ["explicit", "probable", "unclear"] },
+        "source_ids": { "type": "array", "items": { "type": "string" }, "default": [] }
+      }
+    },
+    "sourceFinding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["statement", "basis", "source_ids"],
+      "properties": {
+        "statement": { "type": "string" },
+        "basis": { "type": "string", "enum": ["user_account", "documentary_evidence", "communication_context", "inference", "mixed"] },
+        "source_ids": { "type": "array", "items": { "type": "string" } },
+        "location_note": { "type": "string", "default": "" }
+      }
+    },
+    "uncertainty": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["issue", "type"],
+      "properties": {
+        "issue": { "type": "string" },
+        "type": { "type": "string", "enum": ["missing", "unclear", "conflicting", "unsupported", "possible_inference"] },
+        "related_source_ids": { "type": "array", "items": { "type": "string" }, "default": [] },
+        "question_for_user": { "type": "string", "default": "" }
+      }
+    }
+  }
+}
