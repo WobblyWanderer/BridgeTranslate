@@ -1,0 +1,346 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="BridgeTranslate is a universal communication bridge prototype.">
+  <title>BridgeTranslate prototype</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to main content</a>
+
+  <header class="site-header">
+    <div class="brand" aria-label="BridgeTranslate">
+      <span class="brand-mark" aria-hidden="true">🌉</span>
+      <span>BridgeTranslate</span>
+    </div>
+    <div class="prototype-badge">Interface prototype</div>
+  </header>
+
+  <main id="main" class="shell">
+    <div class="prototype-notice" role="note">
+      <strong>This version does not send or analyse files.</strong>
+      It is a clickable model for testing the crossing. Selected file names remain in this browser tab.
+    </div>
+
+    <div class="progress-wrap" aria-label="Crossing progress">
+      <div class="progress-label"><span id="step-label">Welcome</span><span id="step-count">1 of 9</span></div>
+      <div class="progress-track" aria-hidden="true"><div id="progress-bar" class="progress-bar"></div></div>
+    </div>
+
+    <form id="bridge-form" novalidate>
+      <section class="step is-active" data-step="1" data-title="Welcome">
+        <div class="hero-icon" aria-hidden="true">🌉</div>
+        <p class="eyebrow">A universal communication bridge</p>
+        <h1>Say it your way.</h1>
+        <p class="lead">Add anything that helps explain it. BridgeTranslate helps turn your meaning into a form another person or system can understand.</p>
+
+        <div class="welcome-grid">
+          <div class="info-tile"><span aria-hidden="true">🧠</span><p>You do not need a diagnosis.</p></div>
+          <div class="info-tile"><span aria-hidden="true">🕸️</span><p>You do not need to organise your thoughts first.</p></div>
+          <div class="info-tile"><span aria-hidden="true">✍️</span><p>Speaking is not required. The whole crossing can be completed in writing.</p></div>
+          <div class="info-tile"><span aria-hidden="true">✅</span><p>You check the meaning before any final document is made.</p></div>
+        </div>
+
+        <div class="actions actions-primary">
+          <button class="button primary next" type="button">Start crossing</button>
+        </div>
+        <details>
+          <summary>How this works</summary>
+          <p>You describe what happened, optionally add context and evidence, check the bridge understood you, then choose the output you need.</p>
+        </details>
+      </section>
+
+      <section class="step" data-step="2" data-title="Access and consent" hidden>
+        <p class="eyebrow">Private invitation</p>
+        <h2>Enter the crossing code</h2>
+        <p>No account. No password to remember. This static prototype accepts any non-empty code.</p>
+
+        <label for="access-code">Invitation code</label>
+        <input id="access-code" name="accessCode" type="text" autocomplete="off" inputmode="text" placeholder="Enter code">
+        <p id="code-error" class="field-error" role="alert" hidden>Please enter a code to continue.</p>
+
+        <fieldset class="consent-box">
+          <legend>Before continuing</legend>
+          <label class="check-row">
+            <input id="consent" type="checkbox">
+            <span>I understand that a working version will use AI to process the text and files I choose, and I will remove unnecessary identifying information before use.</span>
+          </label>
+          <p>BridgeTranslate organises communication. It is not legal, medical or benefits advice. The result must be reviewed before it is used.</p>
+        </fieldset>
+
+        <div class="actions">
+          <button class="button secondary back" type="button">Back</button>
+          <button id="access-next" class="button primary" type="button">I understand, continue</button>
+        </div>
+      </section>
+
+      <section class="step" data-step="3" data-title="How you communicate" hidden>
+        <p class="eyebrow">Optional communication map</p>
+        <h2>What would help the bridge understand you?</h2>
+        <p>Select any that fit. The labels in brackets can help when you already know why it happens. They are clues, not diagnoses.</p>
+
+        <div class="display-controls" role="group" aria-label="Card display options">
+          <label class="switch-row"><input id="toggle-examples" type="checkbox" checked> Show examples</label>
+          <label class="switch-row"><input id="toggle-labels" type="checkbox" checked> Show bracket labels</label>
+        </div>
+
+        <h3>Thinking and information routing</h3>
+        <div class="card-grid option-grid">
+          <label class="choice-card">
+            <input type="checkbox" name="communication" value="connected_thoughts">
+            <span class="card-icon" aria-hidden="true">🕸️</span>
+            <span class="card-copy"><strong>My thoughts arrive connected</strong><span class="bracket-label">(gestalt / networked thinking)</span><small>I may explain several linked things before the main point becomes visible.</small></span>
+          </label>
+          <label class="choice-card">
+            <input type="checkbox" name="communication" value="word_retrieval">
+            <span class="card-icon" aria-hidden="true">🔎</span>
+            <span class="card-copy"><strong>I know what I mean but cannot find the word</strong><span class="bracket-label">(word retrieval / dysnomia)</span><small>I may describe a person, object or role by function, story or relationship.</small></span>
+          </label>
+          <label class="choice-card">
+            <input type="checkbox" name="communication" value="sequencing">
+            <span class="card-icon" aria-hidden="true">🌀</span>
+            <span class="card-copy"><strong>My information comes out in a different order</strong><span class="bracket-label">(sequencing / executive function)</span><small>Please organise it without removing useful context.</small></span>
+          </label>
+          <label class="choice-card">
+            <input type="checkbox" name="communication" value="institutional_translation">
+            <span class="card-icon" aria-hidden="true">📚</span>
+            <span class="card-copy"><strong>I understand complex ideas but forms confuse me</strong><span class="bracket-label">(hyperlexia / institutional translation)</span><small>I may understand the subject while not understanding what the question expects.</small></span>
+          </label>
+          <label class="choice-card">
+            <input type="checkbox" name="communication" value="delayed_processing">
+            <span class="card-icon" aria-hidden="true">⏳</span>
+            <span class="card-copy"><strong>I need time before the full explanation arrives</strong><span class="bracket-label">(delayed processing)</span><small>Important context may arrive after I have started answering.</small></span>
+          </label>
+          <label class="choice-card">
+            <input type="checkbox" name="communication" value="concrete_visual">
+            <span class="card-icon" aria-hidden="true">🧱</span>
+            <span class="card-copy"><strong>I understand better through examples, pictures or practical systems</strong><span class="bracket-label">(concrete or visual processing)</span><small>Abstract wording may need a real example or structural map.</small></span>
+          </label>
+        </div>
+
+        <h3>Feelings, body signals and stress</h3>
+        <div class="card-grid option-grid">
+          <label class="choice-card">
+            <input type="checkbox" name="communication" value="alexithymia">
+            <span class="card-icon" aria-hidden="true">🌫️</span>
+            <span class="card-copy"><strong>Feelings are hard to identify or name</strong><span class="bracket-label">(alexithymia)</span><small>I may know something matters before I can label the emotion.</small></span>
+          </label>
+          <label class="choice-card">
+            <input type="checkbox" name="communication" value="interoception">
+            <span class="card-icon" aria-hidden="true">🌡️</span>
+            <span class="card-copy"><strong>Body signals are hard to identify or explain</strong><span class="bracket-label">(interoception)</span><small>I may notice a change in function before I can describe the sensation.</small></span>
+          </label>
+          <label class="choice-card">
+            <input type="checkbox" name="communication" value="stress_load">
+            <span class="card-icon" aria-hidden="true">⚡</span>
+            <span class="card-copy"><strong>Stress changes how well I can communicate</strong><span class="bracket-label">(processing or regulation load)</span><small>I may lose words, speech, memory or sequencing when overloaded.</small></span>
+          </label>
+        </div>
+
+        <h3>Speech and written communication</h3>
+        <div class="card-grid option-grid">
+          <label class="choice-card">
+            <input type="checkbox" name="communication" value="written_only">
+            <span class="card-icon" aria-hidden="true">✍️</span>
+            <span class="card-copy"><strong>I communicate only in writing</strong><span class="bracket-label">(non-speaking / written communication)</span><small>Do not require a voice response or telephone conversation.</small></span>
+          </label>
+          <label class="choice-card">
+            <input type="checkbox" name="communication" value="speech_unreliable">
+            <span class="card-icon" aria-hidden="true">🔇</span>
+            <span class="card-copy"><strong>My speech may stop or become unreliable</strong><span class="bracket-label">(situational speech loss / intermittent speech)</span><small>Writing may remain available when speaking is not.</small></span>
+          </label>
+          <label class="choice-card">
+            <input type="checkbox" name="communication" value="aac">
+            <span class="card-icon" aria-hidden="true">💬</span>
+            <span class="card-copy"><strong>I use a communication aid or another person to support communication</strong><span class="bracket-label">(AAC / supported communication)</span><small>Accept typed, selected, symbol-based or supported input as my own communication.</small></span>
+          </label>
+          <label class="choice-card">
+            <input type="checkbox" name="communication" value="speech_first">
+            <span class="card-icon" aria-hidden="true">🎙️</span>
+            <span class="card-copy"><strong>Speaking is easier than typing</strong><span class="bracket-label">(speech-first input)</span><small>Let me dictate naturally and correct the written result afterwards.</small></span>
+          </label>
+          <label class="choice-card">
+            <input type="checkbox" name="communication" value="text_first">
+            <span class="card-icon" aria-hidden="true">⌨️</span>
+            <span class="card-copy"><strong>Typing is easier than speaking</strong><span class="bracket-label">(text-first input)</span><small>Keep every stage available without voice input.</small></span>
+          </label>
+        </div>
+
+        <h3>Reading and language</h3>
+        <div class="card-grid option-grid">
+          <label class="choice-card">
+            <input type="checkbox" name="communication" value="dense_text">
+            <span class="card-icon" aria-hidden="true">🔤</span>
+            <span class="card-copy"><strong>Reading dense text is difficult</strong><span class="bracket-label">(dyslexia / visual or language processing)</span><small>Use short sections, clear spacing and optional explanations.</small></span>
+          </label>
+          <label class="choice-card">
+            <input type="checkbox" name="communication" value="additional_language">
+            <span class="card-icon" aria-hidden="true">🌍</span>
+            <span class="card-copy"><strong>English is not my first or strongest language</strong><span class="bracket-label">(English as an additional language)</span><small>Use clear English and avoid unnecessary idioms.</small></span>
+          </label>
+          <label class="choice-card">
+            <input type="checkbox" name="communication" value="system_intent">
+            <span class="card-icon" aria-hidden="true">🧭</span>
+            <span class="card-copy"><strong>I understand the words but not what the system wants</strong><span class="bracket-label">(pragmatic or institutional translation)</span><small>Explain the function of the question before asking me to answer it.</small></span>
+          </label>
+          <label class="choice-card">
+            <input type="checkbox" name="communication" value="unsure">
+            <span class="card-icon" aria-hidden="true">❓</span>
+            <span class="card-copy"><strong>I am not sure</strong><span class="bracket-label">(unknown / exploring / undiagnosed)</span><small>Help me identify which support patterns fit without requiring a label.</small></span>
+          </label>
+        </div>
+
+        <div class="actions">
+          <button class="button secondary back" type="button">Back</button>
+          <button class="button quiet next" type="button">Skip this step</button>
+          <button class="button primary next" type="button">Continue</button>
+        </div>
+      </section>
+
+      <section class="step" data-step="4" data-title="Context and evidence" hidden>
+        <p class="eyebrow">Optional documents</p>
+        <h2>Add anything that helps explain it</h2>
+        <p>Context and evidence are kept separate so the bridge knows what each file is for.</p>
+
+        <div class="upload-grid">
+          <div class="upload-box">
+            <div class="upload-icon" aria-hidden="true">📘</div>
+            <h3>Context / About Me</h3>
+            <p>How you communicate, access needs, recurring barriers or preferred terminology.</p>
+            <label class="button secondary file-button" for="context-files">Choose context files</label>
+            <input id="context-files" class="visually-hidden" type="file" multiple>
+            <ul id="context-list" class="file-list" aria-live="polite"></ul>
+          </div>
+          <div class="upload-box">
+            <div class="upload-icon" aria-hidden="true">📎</div>
+            <h3>Documents about what happened</h3>
+            <p>Letters, forms, emails, screenshots, reports, notes or photographs of paperwork.</p>
+            <label class="button secondary file-button" for="evidence-files">Choose evidence files</label>
+            <input id="evidence-files" class="visually-hidden" type="file" multiple>
+            <ul id="evidence-list" class="file-list" aria-live="polite"></ul>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button class="button secondary back" type="button">Back</button>
+          <button class="button primary next" type="button">Continue</button>
+        </div>
+      </section>
+
+      <section class="step" data-step="5" data-title="Say it your way" hidden>
+        <p class="eyebrow">Natural input</p>
+        <h2>Tell the bridge what happened or what you need help saying</h2>
+        <p>Fragments, repetition, tangents, emotion and unfinished thoughts are allowed. Do not organise it first.</p>
+
+        <label for="natural-input">Say it your way</label>
+        <textarea id="natural-input" rows="12" placeholder="Type or paste naturally. The working bridge will map the information before rewriting it."></textarea>
+
+        <label for="wanted-outcome">What outcome do you need? <span class="optional">Optional</span></label>
+        <textarea id="wanted-outcome" rows="4" placeholder="For example: I need them to understand what happened, correct the record, reply in writing, or provide an adjustment."></textarea>
+
+        <div class="actions">
+          <button class="button secondary back" type="button">Back</button>
+          <button id="map-meaning" class="button primary" type="button">Map what I mean</button>
+        </div>
+      </section>
+
+      <section class="step" data-step="6" data-title="Check the meaning" hidden>
+        <p class="eyebrow">Meaning check</p>
+        <h2>Is this what you are trying to say or describe?</h2>
+        <p>This prototype copies your input into an editable map. The working bridge will analyse the account and supplied documents.</p>
+
+        <label for="meaning-map">What I think you mean</label>
+        <textarea id="meaning-map" rows="14"></textarea>
+
+        <div class="actions">
+          <button class="button secondary back" type="button">Go back and add more</button>
+          <button class="button quiet" id="focus-meaning" type="button">Not quite, let me edit it</button>
+          <button class="button primary next" type="button">Yes, that is my meaning</button>
+        </div>
+      </section>
+
+      <section class="step" data-step="7" data-title="Choose destination" hidden>
+        <p class="eyebrow">Where does the meaning need to go?</p>
+        <h2>Choose one or more useful outputs</h2>
+
+        <div class="card-grid destination-grid">
+          <label class="choice-card compact"><input type="checkbox" name="destination" value="healthcare"><span class="card-icon" aria-hidden="true">🩺</span><span class="card-copy"><strong>NHS, GP or healthcare</strong></span></label>
+          <label class="choice-card compact"><input type="checkbox" name="destination" value="benefits"><span class="card-icon" aria-hidden="true">🧾</span><span class="card-copy"><strong>PIP, benefits or form answer</strong></span></label>
+          <label class="choice-card compact"><input type="checkbox" name="destination" value="council"><span class="card-icon" aria-hidden="true">🏛️</span><span class="card-copy"><strong>Council or public service</strong></span></label>
+          <label class="choice-card compact"><input type="checkbox" name="destination" value="housing"><span class="card-icon" aria-hidden="true">🏠</span><span class="card-copy"><strong>Housing</strong></span></label>
+          <label class="choice-card compact"><input type="checkbox" name="destination" value="employment"><span class="card-icon" aria-hidden="true">💼</span><span class="card-copy"><strong>Employer or adjustments</strong></span></label>
+          <label class="choice-card compact"><input type="checkbox" name="destination" value="complaint"><span class="card-icon" aria-hidden="true">📣</span><span class="card-copy"><strong>Complaint or escalation</strong></span></label>
+          <label class="choice-card compact"><input type="checkbox" name="destination" value="timeline"><span class="card-icon" aria-hidden="true">🗓️</span><span class="card-copy"><strong>Timeline and evidence map</strong></span></label>
+          <label class="choice-card compact"><input type="checkbox" name="destination" value="personal"><span class="card-icon" aria-hidden="true">💬</span><span class="card-copy"><strong>Message to a person</strong></span></label>
+          <label class="choice-card compact"><input type="checkbox" name="destination" value="letter"><span class="card-icon" aria-hidden="true">📧</span><span class="card-copy"><strong>Email or letter</strong></span></label>
+          <label class="choice-card compact"><input type="checkbox" name="destination" value="project"><span class="card-icon" aria-hidden="true">🌐</span><span class="card-copy"><strong>Instructions for a larger AI project</strong></span></label>
+          <label class="choice-card compact"><input type="checkbox" name="destination" value="suggest"><span class="card-icon" aria-hidden="true">🧭</span><span class="card-copy"><strong>Suggest the best format</strong></span></label>
+        </div>
+
+        <div class="actions">
+          <button class="button secondary back" type="button">Back</button>
+          <button id="build-draft" class="button primary" type="button">Build draft</button>
+        </div>
+      </section>
+
+      <section class="step" data-step="8" data-title="Check the draft" hidden>
+        <p class="eyebrow">Draft check</p>
+        <h2>How is this?</h2>
+        <p>The working bridge will create the chosen destination format. This prototype provides an editable placeholder.</p>
+
+        <label for="draft-output">Editable draft</label>
+        <textarea id="draft-output" rows="16"></textarea>
+
+        <div class="quick-actions" role="group" aria-label="Draft changes">
+          <button class="chip" type="button" data-draft-action="shorter">Make it shorter</button>
+          <button class="chip" type="button" data-draft-action="voice">Keep more of my voice</button>
+          <button class="chip" type="button" data-draft-action="formal">Make it more formal</button>
+          <button class="chip" type="button" data-draft-action="sources">Show document sources</button>
+        </div>
+
+        <div class="actions">
+          <button class="button secondary back" type="button">Back</button>
+          <button class="button primary next" type="button">Yes, you bridged the gap</button>
+        </div>
+      </section>
+
+      <section class="step" data-step="9" data-title="Take the result" hidden>
+        <div class="hero-icon" aria-hidden="true">✅</div>
+        <p class="eyebrow">Crossing complete</p>
+        <h2>You bridged the gap.</h2>
+        <p>The document is yours. Review it once more before sending.</p>
+
+        <div class="output-actions">
+          <button id="copy-output" class="button primary" type="button">📋 Copy text</button>
+          <button id="download-text" class="button secondary" type="button">📄 Download text</button>
+          <button id="print-output" class="button secondary" type="button">📕 Print or save as PDF</button>
+        </div>
+        <p id="copy-status" class="status" aria-live="polite"></p>
+
+        <div class="completion-links">
+          <p>Future working version:</p>
+          <ul>
+            <li>Download Word or PDF</li>
+            <li>Take a timeline and evidence pack</li>
+            <li>Create another output from the confirmed meaning</li>
+            <li>Support BridgeTranslate through a donation link</li>
+            <li>Show an organisation how to adopt the open bridge</li>
+          </ul>
+        </div>
+
+        <div class="actions">
+          <button id="erase-session" class="button danger" type="button">🗑️ Erase this session</button>
+        </div>
+      </section>
+    </form>
+  </main>
+
+  <footer class="site-footer">
+    <p>BridgeTranslate is a user-made accessibility solution to a system-wide translation problem.</p>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
