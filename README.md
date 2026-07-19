@@ -13,7 +13,7 @@ The user remains the owner of the meaning.
 | Platform | Job |
 |---|---|
 | **GitHub** | Stores the open specification, webpage files and version history. Organisations can copy or adapt the bridge from here. |
-| **Cloudflare Workers** | Hosts Ree's working peer webpage, checks the invitation code and calls the selected AI provider from the server side. |
+| **Cloudflare Workers** | Hosts the working peer webpage and calls the selected AI provider from the server side. The current peer build is open access and does not require an invitation code. |
 | **AI provider** | Analyses the active text and documents and returns the meaning map or requested draft. The reference adapter currently uses OpenAI, but the specification is provider-neutral. |
 
 You do **not** need Python or Streamlit to deploy the current reference webpage.
@@ -48,7 +48,9 @@ BridgeTranslate/
 ## What the working crossing does
 
 ```text
-Invitation code
+Open webpage
+      ↓
+Consent and continue
       ↓
 Optional communication prompts
       ↓
@@ -90,10 +92,9 @@ Branch: main
 Configuration: wrangler.jsonc
 ```
 
-Add these as **Cloudflare secrets**, never as GitHub files:
+Add this as a **Cloudflare secret**, never as a GitHub file:
 
 ```text
-BRIDGE_ACCESS_CODE
 OPENAI_API_KEY
 ```
 
@@ -103,17 +104,19 @@ Optional:
 OPENAI_MODEL
 ```
 
-The GitHub-connected Cloudflare build can then deploy automatically whenever the selected branch changes.
+`BRIDGE_ACCESS_CODE` is no longer used by the open peer build.
+
+The GitHub-connected Cloudflare build can deploy automatically whenever the selected branch changes.
 
 ## Two linked deliverables
 
 ### 1. Hosted peer bridge
 
-A low-friction crossing for ADHD Babes, WI members and other peers who need help carrying their meaning into a form another person or system can understand.
+A low-friction open crossing for ADHD Babes, WI members and other peers who need help carrying their meaning into a form another person or system can understand.
 
 It is designed to:
 
-- use invitation access without a permanent account;
+- open without an account, password or invitation code;
 - accept written communication without requiring speech;
 - accept optional Context / About Me material;
 - accept relevant evidence and screenshots;
@@ -163,6 +166,6 @@ See `specification/TRANSLATION_AIDS.md` and `src/bridge-context.js`.
 7. Evidence-based statements remain connected to their sources.
 8. The final result remains editable.
 9. The specification remains provider-neutral.
-10. Adopting organisations operate their own safe crossing.
+10. Adopting organisations operate their own crossing.
 
 > Accessibility should not depend on the user already understanding the system's hidden language.
