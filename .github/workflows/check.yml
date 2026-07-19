@@ -1,0 +1,36 @@
+name: Check BridgeTranslate build
+
+on:
+  push:
+    branches:
+      - poc-v2-evidence-depot
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Check JavaScript syntax
+        run: |
+          node --check src/index.js
+          node --check src/live-index.js
+          node --check src/bridge-context.js
+          node --check public/bridge-live.js
+
+      - name: Check Cloudflare package
+        run: npx wrangler deploy --dry-run
