@@ -1,4 +1,4 @@
-import bridge from './index-v2.js';
+import bridge from './index.js';
 
 function addPageHeaders(response) {
   const headers = new Headers(response.headers);
@@ -14,21 +14,41 @@ function addPageHeaders(response) {
   });
 }
 
+function json(data, status) {
+  return new Response(JSON.stringify(data), {
+    status,
+    headers: {
+      'content-type': 'application/json; charset=utf-8',
+      'cache-control': 'no-store',
+      'x-content-type-options': 'nosniff'
+    }
+  });
+}
+
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
+
+    if (url.pathname.startsWith('/api/')) {
+      const email = (request.headers.get('cf-access-authenticated-user-email') || '').trim();
+      if (!email) {
+        return json({ error: 'Cloudflare Access authentication is required.' }, 401);
+      }
+    }
+
     if (request.method === 'GET' && (url.pathname === '/' || url.pathname === '/index.html')) {
       const assetRequest = new Request(new URL('/index.html', request.url), request);
       const asset = await env.ASSETS.fetch(assetRequest);
       const page = new HTMLRewriter()
         .on('body', {
           element(element) {
-            element.append('<script src="/bridge-live-v2.js"></script>', { html: true });
+            element.append('<script src="/bridge-live.js"></script>', { html: true });
           }
         })
         .transform(asset);
       return addPageHeaders(page);
     }
+
     return bridge.fetch(request, env, ctx);
   }
 };
