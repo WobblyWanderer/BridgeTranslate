@@ -10,7 +10,7 @@
   const accessStep = document.querySelector('[data-step="2"]');
   let live = false;
 
-  codeInput.value = 'open';
+  codeInput.value = 'cloudflare-access';
   codeInput.hidden = true;
   if (codeLabel) codeLabel.hidden = true;
   if (codeError) codeError.hidden = true;
@@ -18,9 +18,9 @@
     const eyebrow = accessStep.querySelector('.eyebrow');
     const heading = accessStep.querySelector('h2');
     const paragraph = accessStep.querySelector('h2 + p');
-    if (eyebrow) eyebrow.textContent = 'Open bridge';
+    if (eyebrow) eyebrow.textContent = 'Pilot access';
     if (heading) heading.textContent = 'Continue to BridgeTranslate';
-    if (paragraph) paragraph.textContent = 'No account, password or invitation code is required.';
+    if (paragraph) paragraph.textContent = 'Your invitation is checked by Cloudflare before this page loads. This pilot allows five completed documents per approved user.';
   }
   accessButton.textContent = 'I understand, continue';
 
@@ -34,6 +34,12 @@
       button.textContent = button.dataset.originalLabel;
       delete button.dataset.originalLabel;
     }
+  }
+
+  function quotaText(status) {
+    if (!status.usageConfigured) return 'The five-document pilot counter still needs its Cloudflare KV binding.';
+    if (!status.identityConfirmed) return 'Cloudflare Access is not supplying a confirmed user identity yet.';
+    return `${status.documentsRemaining} of ${status.documentsLimit} completed documents remain for this pilot invitation.`;
   }
 
   async function api(path, options = {}) {
@@ -58,14 +64,17 @@
   async function connectStatus() {
     try {
       const status = await api('/api/status');
-      live = Boolean(status.aiConfigured);
+      live = Boolean(status.aiConfigured && status.usageConfigured && status.identityConfirmed);
       if (live) {
-        notice.innerHTML = '<strong>Working peer bridge:</strong> open access is active and AI translation is connected.';
+        notice.innerHTML = `<strong>Peer proof of concept:</strong> BridgeTranslate demonstrates that organisations can adopt accessible translation workflows instead of requiring service users to build their own aids. ${quotaText(status)}`;
+      } else if (!status.aiConfigured) {
+        notice.innerHTML = '<strong>Setup incomplete:</strong> the interface is available, but the AI secret has not been connected.';
       } else {
-        notice.innerHTML = '<strong>Interface build:</strong> the page is open and clickable, but the AI key has not yet been connected. The demonstration path still works.';
+        notice.innerHTML = `<strong>Setup incomplete:</strong> ${quotaText(status)}`;
       }
     } catch {
       live = false;
+      notice.innerHTML = '<strong>Setup incomplete:</strong> the bridge could not confirm its protected AI connection.';
     }
   }
 
@@ -80,7 +89,7 @@
       await api('/api/access', {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ open: true })
+        body: JSON.stringify({ acknowledged: true })
       });
       window.show(3);
     } catch (errorValue) {
@@ -123,10 +132,14 @@
     form.set('stage', 'draft');
     form.set('confirmedMeaning', document.getElementById('meaning').value);
     form.set('destinations', JSON.stringify(selected('destination')));
-    setBusy(draftButton, true, 'Building draft…');
+    setBusy(draftButton, true, 'Building document…');
     try {
       const result = await api('/api/bridge', { method: 'POST', body: form });
       document.getElementById('draft-output').value = result.text;
+      const status = document.getElementById('status');
+      if (status && Number.isFinite(result.documentsRemaining)) {
+        status.textContent = `${result.documentsRemaining} of ${result.documentsLimit} completed documents remain.`;
+      }
       window.show(8);
     } catch (errorValue) {
       window.alert(errorValue.message);
