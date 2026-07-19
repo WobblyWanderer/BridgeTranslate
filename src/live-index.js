@@ -1,4 +1,4 @@
-import bridge from './index.js';
+import bridge from './index-v2.js';
 
 function addPageHeaders(response) {
   const headers = new Headers(response.headers);
@@ -6,10 +6,7 @@ function addPageHeaders(response) {
   headers.set('x-content-type-options', 'nosniff');
   headers.set('referrer-policy', 'no-referrer');
   headers.set('permissions-policy', 'camera=(), geolocation=(), payment=(), usb=()');
-  headers.set(
-    'content-security-policy',
-    "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; connect-src 'self'"
-  );
+  headers.set('content-security-policy', "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; connect-src 'self'");
   return new Response(response.body, {
     status: response.status,
     statusText: response.statusText,
@@ -26,7 +23,7 @@ export default {
       const page = new HTMLRewriter()
         .on('body', {
           element(element) {
-            element.append('<script src="/bridge-live.js"></script>', { html: true });
+            element.append('<script src="/bridge-live-v2.js"></script>', { html: true });
           }
         })
         .transform(asset);
