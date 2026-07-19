@@ -4,7 +4,25 @@
   const mapButton = document.getElementById('map');
   const draftButton = document.getElementById('draft');
   const mapStatus = document.getElementById('map-status');
+  const codeInput = document.getElementById('code');
+  const codeLabel = document.querySelector('label[for="code"]');
+  const codeError = document.getElementById('code-error');
+  const accessStep = document.querySelector('[data-step="2"]');
   let live = false;
+
+  codeInput.value = 'open';
+  codeInput.hidden = true;
+  if (codeLabel) codeLabel.hidden = true;
+  if (codeError) codeError.hidden = true;
+  if (accessStep) {
+    const eyebrow = accessStep.querySelector('.eyebrow');
+    const heading = accessStep.querySelector('h2');
+    const paragraph = accessStep.querySelector('h2 + p');
+    if (eyebrow) eyebrow.textContent = 'Open bridge';
+    if (heading) heading.textContent = 'Continue to BridgeTranslate';
+    if (paragraph) paragraph.textContent = 'No account, password or invitation code is required.';
+  }
+  accessButton.textContent = 'I understand, continue';
 
   function setBusy(button, busy, label) {
     button.disabled = busy;
@@ -40,11 +58,11 @@
   async function connectStatus() {
     try {
       const status = await api('/api/status');
-      live = Boolean(status.accessConfigured && status.aiConfigured);
+      live = Boolean(status.aiConfigured);
       if (live) {
-        notice.innerHTML = '<strong>Working peer bridge:</strong> the invitation gate and AI translation connection are active. Uploaded content is processed for this job and is not intentionally added to a permanent BridgeTranslate account history.';
+        notice.innerHTML = '<strong>Working peer bridge:</strong> open access is active and AI translation is connected.';
       } else {
-        notice.innerHTML = '<strong>Interface build:</strong> the crossing is complete, but the secure access secret or AI key has not yet been connected. The page remains a safe clickable demonstration.';
+        notice.innerHTML = '<strong>Interface build:</strong> the page is open and clickable, but the AI key has not yet been connected. The demonstration path still works.';
       }
     } catch {
       live = false;
@@ -55,24 +73,18 @@
     if (!live) return;
     event.preventDefault();
     event.stopImmediatePropagation();
-    const code = document.getElementById('code');
     const consent = document.getElementById('consent');
-    const error = document.getElementById('code-error');
-    error.hidden = Boolean(code.value.trim());
-    if (!code.value.trim()) return code.focus();
     if (!consent.checked) return consent.focus();
-    setBusy(accessButton, true, 'Checking code…');
+    setBusy(accessButton, true, 'Opening bridge…');
     try {
       await api('/api/access', {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ code: code.value.trim() })
+        body: JSON.stringify({ open: true })
       });
       window.show(3);
     } catch (errorValue) {
-      error.textContent = errorValue.message;
-      error.hidden = false;
-      code.focus();
+      window.alert(errorValue.message);
     } finally {
       setBusy(accessButton, false);
     }
@@ -83,7 +95,6 @@
     event.preventDefault();
     event.stopImmediatePropagation();
     const form = new FormData();
-    form.set('code', document.getElementById('code').value.trim());
     form.set('stage', 'map');
     form.set('story', document.getElementById('story').value);
     form.set('outcome', document.getElementById('outcome').value);
@@ -109,7 +120,6 @@
     event.preventDefault();
     event.stopImmediatePropagation();
     const form = new FormData();
-    form.set('code', document.getElementById('code').value.trim());
     form.set('stage', 'draft');
     form.set('confirmedMeaning', document.getElementById('meaning').value);
     form.set('destinations', JSON.stringify(selected('destination')));
@@ -131,7 +141,6 @@
       event.preventDefault();
       event.stopImmediatePropagation();
       const form = new FormData();
-      form.set('code', document.getElementById('code').value.trim());
       form.set('stage', 'refine');
       form.set('confirmedMeaning', document.getElementById('meaning').value);
       form.set('draft', document.getElementById('draft-output').value);
