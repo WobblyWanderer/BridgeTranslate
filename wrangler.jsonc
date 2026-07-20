@@ -4,9 +4,12 @@
   "main": "src/live-index.js",
   "compatibility_date": "2026-07-19",
   "compatibility_flags": ["nodejs_compat"],
-"ai": {
-  "binding": "AI"
-},
+  "ai": {
+    "binding": "AI"
+  },
+  "vars": {
+    "AI_MODEL": "openai/gpt-5.6-terra"
+  },
   "assets": {
     "directory": "./public",
     "binding": "ASSETS",
