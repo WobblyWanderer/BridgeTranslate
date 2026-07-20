@@ -5,6 +5,7 @@ const MAX_FILES = 5;
 const MAX_FILE_BYTES = 8 * 1024 * 1024;
 const MAX_TOTAL_BYTES = 20 * 1024 * 1024;
 const MAX_DOCUMENTS_PER_USER = 5;
+const DEFAULT_AI_MODEL = 'openai/gpt-5.6-terra';
 
 const JSON_HEADERS = {
   'content-type': 'application/json; charset=utf-8',
@@ -172,18 +173,26 @@ function extractOutputText(payload) {
   return pieces.join('\n').trim();
 }
 
-async function callOpenAI(env, content) {
-  if (!env.OPENAI_API_KEY) return { ok: false, status: 503, error: 'The AI connection has not been configured yet.' };
-  const response = await fetch('https://api.openai.com/v1/responses', {
-    method: 'POST',
-    headers: { authorization: `Bearer ${env.OPENAI_API_KEY}`, 'content-type': 'application/json' },
-    body: JSON.stringify({ model: env.OPENAI_MODEL || 'gpt-5-mini', instructions: BRIDGE_SYSTEM_CONTEXT, input: [{ role: 'user', content }], store: false })
-  });
-  const payload = await response.json().catch(() => ({}));
-  if (!response.ok) return { ok: false, status: 502, error: payload?.error?.message || `The AI provider returned HTTP ${response.status}.` };
-  const text = extractOutputText(payload);
-  if (!text) return { ok: false, status: 502, error: 'The AI provider returned no usable text.' };
-  return { ok: true, text };
+async function callAI(env, content) {
+  if (!env.AI) {
+    return { ok: false, status: 503, error: 'The Cloudflare AI binding has not been configured yet.' };
+  }
+
+  const model = env.AI_MODEL || DEFAULT_AI_MODEL;
+
+  try {
+    const payload = await env.AI.run(model, {
+      instructions: BRIDGE_SYSTEM_CONTEXT,
+      input: [{ role: 'user', content }],
+      max_output_tokens: 6000
+    });
+
+    const text = extractOutputText(payload);
+    if (!text) return { ok: false, status: 502, error: 'The AI model returned no usable text.' };
+    return { ok: true, text, model };
+  } catch (error) {
+    return { ok: false, status: 502, error: error?.message || 'The Cloudflare AI request failed.' };
+  }
 }
 
 async function handleAccess(request) {
@@ -195,7 +204,6 @@ async function handleBridge(request, env) {
   if (request.method !== 'POST') return json({ error: 'Method not allowed.' }, 405);
   const email = authenticatedEmail(request);
   if (!email) return json({ error: 'Your Cloudflare Access identity could not be confirmed.' }, 401);
-  if (!env.USAGE_KV) return json({ error: 'The pilot usage counter has not been configured yet.' }, 503);
 
   const form = await request.formData();
   const stage = readString(form, 'stage');
@@ -206,9 +214,10 @@ async function handleBridge(request, env) {
   const refinement = readString(form, 'refinement');
   const communication = readJsonArray(form, 'communication');
   const destinations = readJsonArray(form, 'destinations');
-  const documentsUsed = await readUsage(env, email);
+  const usageConfigured = Boolean(env.USAGE_KV);
+  const documentsUsed = (await readUsage(env, email)) ?? 0;
 
-  if (stage === 'draft' && documentsUsed >= MAX_DOCUMENTS_PER_USER) {
+  if (usageConfigured && stage === 'draft' && documentsUsed >= MAX_DOCUMENTS_PER_USER) {
     return json({ error: 'This proof-of-concept invitation has already produced its five documents.', documentsUsed, documentsLimit: MAX_DOCUMENTS_PER_USER, documentsRemaining: 0 }, 429);
   }
 
@@ -233,15 +242,25 @@ async function handleBridge(request, env) {
     return json({ error: 'Unknown bridge stage.' }, 400);
   }
 
-  const result = await callOpenAI(env, content);
+  const result = await callAI(env, content);
   if (!result.ok) return json({ error: result.error }, result.status);
 
-  let updatedDocumentsUsed = documentsUsed;
-  if (stage === 'draft') {
+  let updatedDocumentsUsed = usageConfigured ? documentsUsed : null;
+  if (usageConfigured && stage === 'draft') {
     updatedDocumentsUsed += 1;
     await env.USAGE_KV.put(usageKey(email), String(updatedDocumentsUsed));
   }
-  return json({ ok: true, stage, text: result.text, documentsUsed: updatedDocumentsUsed, documentsLimit: MAX_DOCUMENTS_PER_USER, documentsRemaining: Math.max(0, MAX_DOCUMENTS_PER_USER - updatedDocumentsUsed) });
+
+  return json({
+    ok: true,
+    stage,
+    text: result.text,
+    model: result.model,
+    usageConfigured,
+    documentsUsed: updatedDocumentsUsed,
+    documentsLimit: MAX_DOCUMENTS_PER_USER,
+    documentsRemaining: updatedDocumentsUsed === null ? null : Math.max(0, MAX_DOCUMENTS_PER_USER - updatedDocumentsUsed)
+  });
 }
 
 function docxParagraphs(text) {
@@ -288,8 +307,8 @@ export default {
         ok: true,
         openAccess: false,
         accessConfigured: Boolean(authenticatedEmail(request)),
-        aiConfigured: Boolean(env.OPENAI_API_KEY),
-        model: env.OPENAI_MODEL || 'gpt-5-mini',
+        aiConfigured: Boolean(env.AI),
+        model: env.AI_MODEL || DEFAULT_AI_MODEL,
         limits: { maxFiles: MAX_FILES, maxIndividualMB: 8, maxCombinedMB: 20, maxDocuments: MAX_DOCUMENTS_PER_USER },
         ...(await usageStatus(request, env))
       });
