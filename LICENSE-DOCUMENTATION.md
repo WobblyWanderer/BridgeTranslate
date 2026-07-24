@@ -10,7 +10,7 @@ Legal code: https://creativecommons.org/licenses/by-sa/4.0/legalcode
 
 Attribution should identify:
 
-> BridgeTranslate, originated and designed by Marie Meronym (legal name at first public release: Marie Brown)  
+> BridgeTranslate, originated and designed by Marie Meronym (legal name recorded on 24 July 2026: Marie Brown)  
 > https://github.com/WobblyWanderer/BridgeTranslate
 
 Adaptations must be marked as adaptations and shared under the same or a compatible licence.
