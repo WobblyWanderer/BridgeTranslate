@@ -1,0 +1,20 @@
+cff-version: 1.2.0
+message: "If you use or adapt BridgeTranslate, please cite Marie Meronym as the originator and system architect."
+title: "BridgeTranslate"
+type: software
+authors:
+  - family-names: "Meronym"
+    given-names: "Marie"
+    alias: "WobblyWanderer"
+version: 0.3.0
+date-released: 2026-07-24
+repository-code: "https://github.com/WobblyWanderer/BridgeTranslate"
+url: "https://github.com/WobblyWanderer/BridgeTranslate"
+license: "AGPL-3.0-or-later"
+abstract: "An accessibility crossing that maps and confirms a user's intended meaning before translating it into an editable destination-specific form."
+keywords:
+  - accessibility
+  - communication
+  - neurodivergence
+  - meaning mapping
+  - evidence
