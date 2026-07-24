@@ -1,6 +1,8 @@
 # Origin of BridgeTranslate
 
-BridgeTranslate was conceived and designed by **Marie Meronym** as an accessibility crossing between a person's natural communication and the language, structure and evidence conventions demanded by institutions and other systems.
+BridgeTranslate was conceived and designed by **Marie Meronym** — legal name at the date of first public release: **Marie Brown** as an accessibility crossing between a person's natural communication and the language, structure and evidence conventions demanded by institutions and other systems.
+
+For avoidance of doubt, **Marie Meronym and Marie Brown identify the same person**. Marie Meronym is her preferred public and professional name; Marie Brown is her legal name at the date of first public release.
 
 Marie Meronym is the originator and system architect of the BridgeTranslate method: natural input first; a visible meaning map; separation of account, evidence, conflict, inference and uncertainty; user confirmation before drafting; and editable destination-specific output.
 
@@ -22,5 +24,7 @@ Marie defined the problem, governing principles, user journey, safeguards, inten
 ## What this record establishes
 
 This record documents the provenance of this particular method, specification, wording and implementation. Copyright and open licences protect the published expression; they do not create ownership of every independently developed idea that may resemble it.
+
+The explicit name linkage above is part of the project's provenance record and should be retained with the origin statement.
 
 Please cite the project as described in [CITATION.cff](CITATION.cff) and retain the origin notice when copying or adapting the published work.
