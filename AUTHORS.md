@@ -2,7 +2,7 @@
 
 ## Originator and system architect
 
-**Marie Meronym** (`WobblyWanderer`) — legal name at the date of first public release: **Marie Brown**
+**Marie Meronym** (`WobblyWanderer`) — legal name recorded on 24 July 2026: **Marie Brown**
 
 Marie Meronym and Marie Brown identify the same person. Marie originated BridgeTranslate and defined its purpose, accessibility model, meaning-confirmation crossing, evidence lanes, safeguards and public-benefit direction. She remains the authority on the intended meaning of the system.
 
