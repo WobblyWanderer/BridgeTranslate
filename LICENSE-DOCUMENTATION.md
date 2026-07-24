@@ -1,6 +1,6 @@
 # Documentation licence
 
-Copyright (C) 2026 Marie Meronym.
+Copyright (C) 2026 Marie Brown, publicly and professionally known as Marie Meronym.
 
 Unless a file says otherwise, the prose documentation in Markdown files in this repository is licensed under the **Creative Commons Attribution-ShareAlike 4.0 International licence (CC BY-SA 4.0)**.
 
@@ -10,7 +10,7 @@ Legal code: https://creativecommons.org/licenses/by-sa/4.0/legalcode
 
 Attribution should identify:
 
-> BridgeTranslate, originated and designed by Marie Meronym  
+> BridgeTranslate, originated and designed by Marie Meronym (legal name at first public release: Marie Brown)  
 > https://github.com/WobblyWanderer/BridgeTranslate
 
 Adaptations must be marked as adaptations and shared under the same or a compatible licence.
