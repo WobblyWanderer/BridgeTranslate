@@ -1,6 +1,6 @@
 # BridgeTranslate
 
-> **Originated and designed by Marie Meronym (legal name at the date of first public release: Marie Brown).** The documented private repository history begins on 11 July 2026. See [ORIGIN.md](ORIGIN.md), [DISCLOSURE_LOG.md](DISCLOSURE_LOG.md) and [CITATION.cff](CITATION.cff).
+> **Originated and designed by Marie Meronym (legal name recorded on 24 July 2026: Marie Brown).** The documented private repository history begins on 11 July 2026. See [ORIGIN.md](ORIGIN.md), [DISCLOSURE_LOG.md](DISCLOSURE_LOG.md) and [CITATION.cff](CITATION.cff).
 
 **Use GitHub to keep the bridge. Use an appropriate host to run the bridge as a webpage.**
 
@@ -167,7 +167,7 @@ See `specification/TRANSLATION_AIDS.md` and `src/bridge-context.js`.
 
 ## Origin, citation and licences
 
-BridgeTranslate was originated and designed by **Marie Meronym** — legal name at the date of first public release: **Marie Brown**. The names Marie Meronym and Marie Brown identify the same person. AI tools have assisted with translation, drafting and implementation under her direction.
+BridgeTranslate was originated and designed by **Marie Meronym** — legal name recorded on 24 July 2026: **Marie Brown**. The names Marie Meronym and Marie Brown identify the same person. AI tools have assisted with translation, drafting and implementation under her direction.
 
 - Origin and dated history: [ORIGIN.md](ORIGIN.md)
 - Public disclosure record: [DISCLOSURE_LOG.md](DISCLOSURE_LOG.md)
