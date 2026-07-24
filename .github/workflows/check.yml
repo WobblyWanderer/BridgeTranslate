@@ -3,7 +3,8 @@ name: Check BridgeTranslate build
 on:
   push:
     branches:
-      - poc-v2-evidence-depot
+      - main
+      - 'agent/**'
   pull_request:
 
 permissions:
@@ -29,7 +30,9 @@ jobs:
           node --check src/index.js
           node --check src/live-index.js
           node --check src/bridge-context.js
+          node --check src/index-v2.js
           node --check public/bridge-live.js
+          node --check public/bridge-live-v2.js
 
       - name: Check Cloudflare package
         run: npx wrangler deploy --dry-run
