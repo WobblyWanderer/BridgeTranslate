@@ -1,6 +1,10 @@
 # BridgeTranslate
 
-**Use GitHub to keep the bridge. Use Cloudflare to run the bridge as a webpage.**
+> **Originated and designed by Marie Meronym.** The documented private repository history begins on 11 July 2026. See [ORIGIN.md](ORIGIN.md), [DISCLOSURE_LOG.md](DISCLOSURE_LOG.md) and [CITATION.cff](CITATION.cff).
+
+**Use GitHub to keep the bridge. Use an appropriate host to run the bridge as a webpage.**
+
+**Status:** early reference implementation and open specification—not a managed legal, medical, clinical, benefits or safeguarding service. A deployer must verify security, privacy, accessibility, model behaviour and human review before using sensitive or high-stakes material.
 
 BridgeTranslate is a user-made accessibility solution to a system-wide translation problem.
 
@@ -13,8 +17,8 @@ The user remains the owner of the meaning.
 | Platform | Job |
 |---|---|
 | **GitHub** | Stores the open specification, webpage files and version history. Organisations can copy or adapt the bridge from here. |
-| **Cloudflare Workers** | Hosts the working peer webpage and calls the selected AI provider from the server side. The current peer build is open access and does not require an invitation code. |
-| **AI provider** | Analyses the active text and documents and returns the meaning map or requested draft. The reference adapter currently uses OpenAI, but the specification is provider-neutral. |
+| **Cloudflare Workers** | Can host the reference webpage and call a selected AI provider from the server side. The current live API route expects Cloudflare Access authentication; adopters choose and document their own access model. |
+| **AI provider** | Analyses the active text and documents and returns the meaning map or requested draft. The reference deployment uses a configurable Cloudflare Workers AI binding, but the specification is provider-neutral. |
 
 You do **not** need Python or Streamlit to deploy the current reference webpage.
 
@@ -92,21 +96,11 @@ Branch: main
 Configuration: wrangler.jsonc
 ```
 
-Add this as a **Cloudflare secret**, never as a GitHub file:
+The checked-in `wrangler.jsonc` expects a Cloudflare Workers AI binding named `AI` and sets the configurable `AI_MODEL` variable. No provider key belongs in this repository.
 
-```text
-OPENAI_API_KEY
-```
+The live Worker protects `/api/*` with Cloudflare Access and reads the authenticated email header. A `USAGE_KV` binding is optional; without it, the quota counter is disabled. `BRIDGE_ACCESS_CODE` is no longer used.
 
-Optional:
-
-```text
-OPENAI_MODEL
-```
-
-`BRIDGE_ACCESS_CODE` is no longer used by the open peer build.
-
-The GitHub-connected Cloudflare build can deploy automatically whenever the selected branch changes.
+Importing this repository does not by itself create a safe public service. Before deployment, read [SECURITY_AND_PRIVACY.md](SECURITY_AND_PRIVACY.md), choose the authentication and retention model deliberately, and verify the actual provider route.
 
 ## Two linked deliverables
 
@@ -114,9 +108,9 @@ The GitHub-connected Cloudflare build can deploy automatically whenever the sele
 
 A low-friction open crossing for ADHD Babes, WI members and other peers who need help carrying their meaning into a form another person or system can understand.
 
-It is designed to:
+The reusable crossing is designed to:
 
-- open without an account, password or invitation code;
+- minimise unnecessary account, password and invitation barriers while allowing a deployer to protect sensitive processing appropriately;
 - accept written communication without requiring speech;
 - accept optional Context / About Me material;
 - accept relevant evidence and screenshots;
@@ -169,3 +163,22 @@ See `specification/TRANSLATION_AIDS.md` and `src/bridge-context.js`.
 10. Adopting organisations operate their own crossing.
 
 > Accessibility should not depend on the user already understanding the system's hidden language.
+
+
+## Origin, citation and licences
+
+BridgeTranslate was originated and designed by **Marie Meronym**. AI tools have assisted with translation, drafting and implementation under her direction.
+
+- Origin and dated history: [ORIGIN.md](ORIGIN.md)
+- Public disclosure record: [DISCLOSURE_LOG.md](DISCLOSURE_LOG.md)
+- Machine-readable citation: [CITATION.cff](CITATION.cff)
+- Free-core commitment: [PUBLIC-BENEFIT-COMMITMENT.md](PUBLIC-BENEFIT-COMMITMENT.md)
+- Name and attribution policy: [TRADEMARK.md](TRADEMARK.md)
+
+Software and machine-readable material are licensed under **AGPL-3.0-or-later**. Prose documentation is licensed under **CC BY-SA 4.0**. Commercial hosting, support and specialist integration are allowed, but the licence obligations and origin notices remain. Free source code does not promise free hosting, AI compute or professional services.
+
+See [LICENSE](LICENSE), [LICENSE-DOCUMENTATION.md](LICENSE-DOCUMENTATION.md) and [NOTICE](NOTICE).
+
+## Safety and privacy
+
+Do not upload personal evidence, credentials or confidential records to public GitHub issues or pull requests. A deployer must verify where input is sent, what hosts and model providers log, and whether browser-level “erase” behaviour actually removes server/provider records. See [SECURITY_AND_PRIVACY.md](SECURITY_AND_PRIVACY.md).
