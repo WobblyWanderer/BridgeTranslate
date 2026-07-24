@@ -92,7 +92,7 @@
 </section>
 </form>
 </main>
-<footer>BridgeTranslate accepts natural communication first. The user remains the owner of meaning.</footer>
+<footer>BridgeTranslate accepts natural communication first. The user remains the owner of meaning. <a href="https://github.com/WobblyWanderer/BridgeTranslate">Source, licence and origin</a>.</footer>
 <script>
 const steps=[...document.querySelectorAll('.step')],nameEl=document.getElementById('step-name'),countEl=document.getElementById('step-count'),bar=document.getElementById('bar');let current=1;
 function show(n){current=Math.max(1,Math.min(n,steps.length));steps.forEach(s=>s.hidden=Number(s.dataset.step)!==current);const s=steps[current-1];nameEl.textContent=s.dataset.name;countEl.textContent=current+' of '+steps.length;bar.style.width=(current/steps.length*100)+'%';const h=s.querySelector('h1,h2');if(h){h.tabIndex=-1;h.focus({preventScroll:true})}window.scrollTo({top:0,behavior:'smooth'})}
