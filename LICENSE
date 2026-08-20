@@ -1,0 +1,12 @@
+# Bridge licensing
+
+Copyright © 2026 **Marie Brown (Meronym)**.
+
+Unless a file says otherwise:
+
+- **Source code** in this repository is licensed under the [PolyForm Noncommercial License 1.0.0](https://polyformproject.org/licenses/noncommercial/1.0.0).
+- **Documentation and non-code prose** are licensed under [Creative Commons Attribution–NonCommercial–ShareAlike 4.0 International (CC BY-NC-SA 4.0)](https://creativecommons.org/licenses/by-nc-sa/4.0/).
+
+These terms permit people and non-commercial community, charitable, educational, public-research, public-health, and public-sector organisations to study, adapt, translate, and host Bridge. They do **not** permit commercial use, including using Bridge for commercial advantage or monetary compensation.
+
+If you create a public language or community version, retain the required attribution in [`NOTICE.md`](NOTICE.md), identify that it is a modified version, make its core communication-support route genuinely available without a paywall to people who cannot pay, and state your own hosting, privacy, support, and accessibility boundaries clearly. Hosting, AI compute, legal compliance, security review, and support may still have real costs; a deployer remains responsible for its own service.
