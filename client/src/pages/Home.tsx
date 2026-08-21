@@ -235,7 +235,7 @@ export default function Home() {
   return (
     <div className="bridge-page">
       <header className="bridge-shell bridge-header">
-        <a className="bridge-brand" href="#top" aria-label="Bridge home"><span className="bridge-mark"><span className="serif" style={{ fontSize: "1.6rem", lineHeight: 1 }}>B</span></span><span className="bridge-brand-word">BRIDGE</span></a>
+        <a className="bridge-brand" href="#top" aria-label="Bridge home"><span className="bridge-mark"><img className="bridge-mark-image" src="/wobblywanderer-32.png" alt="" /></span><span className="bridge-brand-word">BRIDGE</span></a>
         <div className="bridge-header-note"><span className="bridge-dot" /> meaning stays yours</div>
         <div className="bridge-action-row" style={{ marginTop: 0 }}>
           {isAuthenticated ? <button className="bridge-button ghost" onClick={() => void logout()}>{user?.name ? `Sign out · ${user.name.split(" ")[0]}` : "Sign out"}</button> : <button className="bridge-button ghost" onClick={() => startLogin()}>{loading ? "Checking…" : "Sign in to save"}</button>}
@@ -245,7 +245,7 @@ export default function Home() {
       <main id="top" className="bridge-shell">
         <section className="bridge-hero" aria-labelledby="bridge-title">
           <div><p className="bridge-eyebrow">A translation layer for real people</p><h1 id="bridge-title" className="serif">Bring the map.<br />Cross the bridge.</h1><p className="bridge-hero-copy">Bridge carries your meaning from natural, connected communication into a clear form another person, service, or institution can understand.</p><div className="bridge-hero-actions"><button className="bridge-button primary" onClick={goToWorkspace}>Try Bridge now <ArrowRight size={16} /></button><span className="bridge-login-note"><LockKeyhole size={14} style={{ verticalAlign: "-2px", marginRight: ".3rem" }} /> No account needed to try, copy, or download.</span></div></div>
-          <div className="bridge-hero-visual" aria-hidden="true"><div className="bridge-orbit" /><div className="bridge-map-card"><div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: ".65rem" }}><span className="bridge-eyebrow" style={{ margin: 0, fontSize: ".64rem" }}>meaning map</span><Map size={18} color="#8d73a8" /></div><h3 className="serif">A route through the story</h3><p>Connected details become a sequence without losing the relationships that made them matter.</p><div className="bridge-map-lines"><span className="bridge-map-line" /><span className="bridge-map-line" /><span className="bridge-map-line" /></div></div><div className="bridge-map-tag">your words · their format</div></div>
+          <div className="bridge-hero-visual" aria-hidden="true"><div className="bridge-orbit" /><div className="bridge-map-card"><div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: ".65rem" }}><span className="bridge-eyebrow" style={{ margin: 0, fontSize: ".64rem" }}>meaning map</span><Map size={18} color="var(--bridge-plum)" /></div><h3 className="serif">A route through the story</h3><p>Connected details become a sequence without losing the relationships that made them matter.</p><div className="bridge-map-lines"><span className="bridge-map-line" /><span className="bridge-map-line" /><span className="bridge-map-line" /></div></div><div className="bridge-map-tag">your words · their format</div></div>
         </section>
 
         <section className="bridge-section" aria-labelledby="start-title">
